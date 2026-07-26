@@ -1,0 +1,13 @@
+flowchart LR
+    classDef branch fill:#EAF2FB,stroke:#1F2A44,color:#1F2A44,font-weight:600;
+    classDef gate fill:#FDF1DE,stroke:#C9820F,color:#6B4508,font-weight:600;
+
+    Main[(main branch — always releasable)]:::branch --> Branch[Create short-lived feature branch, less than 2 days]:::branch
+    Branch --> Code[Implement plus write unit tests]:::branch
+    Code --> PR[Open Pull Request, linked to Story and Acceptance Criterion]:::branch
+    PR --> CI{CI: lint, build, tests}:::gate
+    CI -- red --> Code
+    CI -- green --> Review{Peer review: at least 1 approval}:::gate
+    Review -- changes requested --> Code
+    Review -- approved --> Merge[Merge to main]:::branch
+    Merge --> Main

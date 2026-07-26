@@ -1,0 +1,16 @@
+stateDiagram-v2
+    [*] --> New : QA finds a defect
+    New --> Triaged : Severity and priority assigned
+    Triaged --> Assigned : Routed to a developer
+    Assigned --> Resolved : Developer fixes and marks Resolved
+    Resolved --> Retested : QA repeats the original reproduction steps
+    Retested --> Closed : Defect confirmed gone, regression suite green
+    Retested --> Reopened : Defect still reproduces
+    Reopened --> Assigned : Back to the developer
+    Closed --> [*]
+
+    note right of Retested
+        Regression testing runs alongside
+        every retest, confirming the fix
+        did not break anything else.
+    end note

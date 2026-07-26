@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Software Delivery Operating System - Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F4F2;
+  --dot:#DEDEDA;
+  --ink:#161616;
+  --ink-soft:#4A4A48;
+  --muted:#6E6E6A;
+  --muted-2:#93938E;
+  --paper:#FFFFFF;
+  --line:#E2E2DE;
+
+  --yellow:#FFE08A;
+  --yellow-2:#FFD867;
+  --purple:#DED3FA;
+  --green:#BFEBCB;
+  --blue:#CFE4FB;
+  --gray:#E6E6E2;
+  --dash:#B4B4AE;
+
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --shadow:3px 3px 0 var(--ink);
+  --shadow-lg:5px 5px 0 var(--ink);
+  --shadow-sm:2px 2px 0 var(--ink);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--ink);
+  background-color:var(--bg);
+  background-image:radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size:22px 22px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;line-height:1.18;letter-spacing:-.015em;}
+p{margin:0;}
+button{font-family:inherit;}
+
+/* ============ TOP BAR ============ */
+.topbar{
+  position:sticky;top:0;z-index:60;
+  background:rgba(244,244,242,.92);
+  backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--ink);
+}
+.topbar-in{
+  max-width:1120px;margin:0 auto;padding:12px 20px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;letter-spacing:-.02em;white-space:nowrap;}
+.brand .chip{
+  background:var(--yellow);border:2px solid var(--ink);border-radius:5px;
+  box-shadow:var(--shadow-sm);padding:2px 7px;font-size:11.5px;font-weight:800;
+}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-left:auto;}
+.tab{
+  background:var(--paper);border:2px solid var(--ink);border-radius:5px;
+  padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer;
+  box-shadow:var(--shadow-sm);transition:transform .1s,box-shadow .1s,background .15s;
+}
+.tab:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink);}
+.tab.active{background:var(--yellow);}
+
+/* ============ LAYOUT ============ */
+.wrap{max-width:1120px;margin:0 auto;padding:34px 20px 110px;}
+.view{display:none;}
+.view.active{display:block;animation:fade .25s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+.page-head{max-width:660px;margin-bottom:30px;}
+.kicker{
+  display:inline-block;background:var(--ink);color:#fff;
+  font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 9px;border-radius:4px;margin-bottom:14px;
+}
+.page-head h1{font-size:clamp(26px,4vw,38px);font-weight:800;margin-bottom:12px;}
+.page-head p{color:var(--muted);font-size:15.5px;}
+
+/* ============ LEGEND ============ */
+.legend{
+  display:flex;flex-wrap:wrap;gap:9px;margin-bottom:34px;
+  padding:14px;background:var(--paper);
+  border:2px solid var(--ink);border-radius:7px;box-shadow:var(--shadow);
+}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--ink-soft);}
+.swatch{width:15px;height:15px;border:2px solid var(--ink);border-radius:3px;flex:none;}
+
+/* ============ TREE ============ */
+.tree{position:relative;padding:6px 0;}
+.tree::before{
+  content:"";position:absolute;left:50%;top:0;bottom:0;
+  border-left:2px dashed var(--dash);transform:translateX(-1px);
+}
+.tree .node,
+#view-roles .node{
+  border:2px solid var(--ink);border-radius:6px;
+  box-shadow:var(--shadow);
+  padding:11px 16px;
+  font-weight:600;font-size:14.5px;
+  cursor:pointer;text-align:left;
+  background:var(--paper);
+  transition:transform .12s ease,box-shadow .12s ease;
+  display:inline-flex;align-items:center;gap:9px;
+  width:100%;
+}
+.tree .node:hover,
+#view-roles .node:hover{transform:translate(-1.5px,-1.5px);box-shadow:var(--shadow-lg);}
+.tree .node:active,
+#view-roles .node:active{transform:translate(1.5px,1.5px);box-shadow:1px 1px 0 var(--ink);}
+.tree .node:focus-visible,
+#view-roles .node:focus-visible{outline:3px solid #2E6BE6;outline-offset:2px;}
+.tree .node .num{
+  flex:none;font-size:11.5px;font-weight:800;
+  background:rgba(0,0,0,.14);border-radius:4px;padding:1px 6px;
+}
+.tree .node-stage,
+#view-roles .node-stage{background:var(--yellow);font-size:15px;font-weight:700;}
+.tree .node-sub{background:var(--purple);font-size:13px;padding:8px 13px;box-shadow:var(--shadow-sm);font-weight:600;}
+.tree .node-sub:hover{box-shadow:var(--shadow);}
+.tree .node-gate{background:var(--green);font-size:13px;font-weight:700;}
+.tree .node-milestone{background:var(--blue);font-weight:700;}
+
+.row{
+  display:grid;grid-template-columns:1fr 300px 1fr;
+  align-items:center;gap:0;
+  position:relative;z-index:2;
+  margin:0 0 10px;
+}
+.cell-spine{padding:0 4px;}
+.cell-side{position:relative;padding:0 4px;}
+.branch{
+  position:relative;display:flex;flex-direction:column;gap:7px;
+  align-items:stretch;
+}
+.branch::before{
+  content:"";position:absolute;top:50%;width:30px;
+  border-top:2px dashed var(--dash);
+}
+.cell-side.right .branch{padding-left:30px;}
+.cell-side.right .branch::before{left:0;}
+.cell-side.left .branch{padding-right:30px;}
+.cell-side.left .branch::before{right:0;}
+.tree .cell-side.left .node{text-align:right;}
+
+.gate-row{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:1fr 300px 1fr;
+  margin:0 0 10px;
+}
+.gate-row .cell-spine{grid-column:2;}
+.milestone-row{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:1fr 300px 1fr;
+  margin:0 0 14px;
+}
+.milestone-row .cell-spine{grid-column:2;}
+
+@media (max-width:880px){
+  .tree::before{left:17px;}
+  .row,.gate-row,.milestone-row{grid-template-columns:1fr;}
+  .cell-spine{padding-left:44px;margin-bottom:8px;}
+  .cell-side{padding-left:44px;}
+  .cell-side.left .branch{padding-right:0;padding-left:26px;}
+  .cell-side.right .branch{padding-left:26px;}
+  .cell-side.left .branch::before,.cell-side.right .branch::before{left:0;right:auto;width:26px;}
+  .tree .cell-side.left .node{text-align:left;}
+  .cell-side:empty{display:none;}
+  .row{margin-bottom:16px;}
+}
+
+/* ============ DRAWER ============ */
+.overlay{
+  position:fixed;inset:0;background:rgba(22,22,22,.42);
+  opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:90;
+}
+.overlay.show{opacity:1;pointer-events:auto;}
+.drawer{
+  position:fixed;top:0;right:0;height:100%;
+  width:min(560px,100%);
+  background:var(--paper);
+  border-left:2px solid var(--ink);
+  transform:translateX(101%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  z-index:100;display:flex;flex-direction:column;
+}
+.drawer.show{transform:none;}
+.drawer-head{
+  padding:20px 24px 16px;border-bottom:2px solid var(--ink);
+  display:flex;align-items:flex-start;gap:14px;flex:none;
+}
+.drawer-head .badge{
+  font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  border:2px solid var(--ink);border-radius:4px;padding:3px 8px;
+  box-shadow:var(--shadow-sm);white-space:nowrap;
+}
+.drawer-head h3{font-size:20px;font-weight:800;margin-bottom:5px;}
+.drawer-head .tag{font-size:13.5px;color:var(--muted);}
+.close-btn{
+  margin-left:auto;flex:none;
+  width:32px;height:32px;border-radius:5px;
+  border:2px solid var(--ink);background:var(--paper);
+  box-shadow:var(--shadow-sm);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;
+  transition:transform .1s,box-shadow .1s;
+}
+.close-btn:hover{transform:translate(-1px,-1px);box-shadow:var(--shadow);}
+.drawer-body{padding:22px 24px 60px;overflow-y:auto;flex:1;}
+
+.blk{margin-bottom:22px;}
+.blk-label{
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink);margin-bottom:9px;
+  display:flex;align-items:center;gap:7px;
+}
+.blk-label::before{content:"";width:12px;height:3px;background:var(--yellow-2);border:1px solid var(--ink);border-radius:2px;flex:none;}
+.blk-label.p::before{background:var(--purple);}
+.blk-label.g::before{background:var(--green);}
+.blk-label.b::before{background:var(--blue);}
+.blk p{font-size:14.2px;color:var(--ink-soft);}
+ul.tick{margin:0;padding:0;list-style:none;}
+ul.tick li{
+  font-size:14px;color:var(--ink-soft);
+  padding-left:19px;position:relative;margin-bottom:7px;
+}
+ul.tick li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;background:var(--ink);border-radius:50%;}
+ul.check li{padding-left:26px;}
+ul.check li::before{
+  content:"";position:absolute;left:0;top:2px;width:15px;height:15px;
+  border:2px solid var(--ink);border-radius:3px;background:var(--paper);
+}
+.callout{
+  background:#FBF7EA;border:2px solid var(--ink);border-radius:6px;
+  padding:13px 15px;font-size:13.2px;color:var(--ink-soft);
+  box-shadow:var(--shadow-sm);
+}
+.callout b{color:var(--ink);}
+.meta-line{
+  font-size:13.2px;color:var(--ink-soft);
+  padding:11px 0 0;border-top:1px dashed var(--line);margin-top:4px;
+}
+.meta-line b{color:var(--ink);}
+
+/* ============ GENERIC CARDS / TABLES ============ */
+.card{
+  background:var(--paper);border:2px solid var(--ink);border-radius:8px;
+  box-shadow:var(--shadow);padding:22px;margin-bottom:20px;
+}
+.card h3{font-size:17.5px;font-weight:800;margin-bottom:6px;}
+.card h4{font-size:14.5px;font-weight:700;margin:18px 0 8px;}
+.card .sub{color:var(--muted);font-size:13.8px;margin-bottom:14px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+
+.tbl-wrap{overflow-x:auto;border:2px solid var(--ink);border-radius:8px;box-shadow:var(--shadow);background:var(--paper);margin-bottom:22px;}
+table{border-collapse:collapse;width:100%;min-width:660px;font-size:13px;}
+th{
+  background:var(--ink);color:#fff;text-align:left;
+  padding:10px 12px;font-weight:700;font-size:11.5px;
+  letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;
+}
+td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--ink-soft);vertical-align:top;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:nth-child(even) td{background:#FAFAF8;}
+td.c{text-align:center;font-weight:700;font-size:12px;color:var(--ink);}
+.raci-A{background:var(--yellow)!important;}
+.raci-R{background:var(--green)!important;}
+
+.pill{
+  display:inline-block;background:var(--paper);
+  border:2px solid var(--ink);border-radius:999px;
+  padding:4px 11px;font-size:12px;font-weight:600;
+  box-shadow:var(--shadow-sm);margin:0 6px 6px 0;
+}
+.pill.y{background:var(--yellow);}
+.pill.p{background:var(--purple);}
+.pill.g{background:var(--green);}
+
+/* ============ DIAGRAMS ============ */
+.diagram-shell{margin:16px 0 4px;}
+.diagram-toolbar{
+  display:flex;align-items:center;justify-content:flex-end;gap:6px;
+  margin-bottom:8px;
+}
+.diagram-toolbar button,.diagram-toolbar output{
+  min-width:36px;height:32px;border:2px solid var(--ink);border-radius:5px;
+  background:var(--paper);color:var(--ink);font:700 12px var(--sans);
+  display:inline-grid;place-items:center;padding:0 10px;
+}
+.diagram-toolbar output{min-width:58px;background:var(--bg);}
+.diagram-toolbar button{cursor:pointer;}
+.diagram-toolbar button:hover{background:var(--yellow);transform:none;box-shadow:none;}
+.diagram-toolbar button:active{transform:none;box-shadow:none;}
+.diagram-toolbar button:focus-visible,.mermaid-wrap:focus-visible{
+  outline:3px solid #4C86C6;outline-offset:2px;
+}
+.mermaid-wrap{
+  position:relative;width:100%;height:min(72vh,680px);min-height:360px;
+  padding:0;overflow:scroll;overscroll-behavior:contain;cursor:grab;
+  background:var(--paper);border:2px solid var(--ink);border-radius:7px;
+  box-shadow:var(--shadow);touch-action:none;
+  scrollbar-gutter:stable both-edges;
+}
+.mermaid-wrap.dragging{cursor:grabbing;user-select:none;}
+.diagram-canvas{position:relative;min-width:100%;min-height:100%;}
+.mermaid-wrap .mermaid{
+  position:absolute;left:24px;top:24px;margin:0;padding:0;
+  background:transparent;border:0;box-shadow:none;line-height:normal;
+}
+.mermaid-wrap svg{display:block;max-width:none!important;}
+.mermaid-wrap *{transition:none!important;animation:none!important;}
+.diagram-error{
+  margin:24px;padding:14px;border:2px solid #A12B1F;border-radius:6px;
+  background:#FBD3CC;color:#611B13;font-size:13px;font-weight:600;
+}
+
+.foot{
+  margin-top:44px;padding-top:22px;border-top:2px dashed var(--dash);
+  color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
+@media(max-width:620px){
+  .mermaid-wrap{height:62vh;min-height:320px;}
+  .diagram-toolbar{justify-content:flex-start;overflow-x:auto;padding-bottom:2px;}
+}
+::selection{background:var(--yellow-2);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand"><span class="chip">SDOS</span> Software Delivery Operating System</div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="view active" id="view-roadmap"></div>
+  <div class="view" id="view-methodology"></div>
+  <div class="view" id="view-roles"></div>
+  <div class="view" id="view-comms"></div>
+  <div class="view" id="view-templates"></div>
+  <div class="view" id="view-reference"></div>
+  <div class="view" id="view-diagrams"></div>
+
+  <div class="foot">
+    <span>Standard Operating Procedure · v1.0 · Scrum-backbone hybrid (Scrum · XP · Kanban · Lean)</span>
+    <span>Click any node to open its detail</span>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <div class="drawer-head">
+    <span class="badge" id="drawer-badge">Stage</span>
+    <div style="min-width:0">
+      <h3 id="drawer-title">Title</h3>
+      <div class="tag" id="drawer-tag"></div>
+    </div>
+    <button class="close-btn" id="close-btn" aria-label="Close">✕</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+/* =====================================================================
+   DATA - STAGES (with sub-nodes) AND GATES
+   ===================================================================== */
+const STAGES = [
+{
+  n:1,id:"conception",name:"Project Conception",
+  tag:"Get everyone aligned on WHY before anyone writes a requirement.",
+  objective:"Establish a single, shared mental model of why the project exists, what success looks like, and what is explicitly out of scope - before any requirement, design, or line of code is produced. Every downstream ambiguity traces back to a gap opened here.",
+  entry:"A business need has been named by a stakeholder with authority to fund or prioritize it.",
+  responsible:"PO/BA drafts the charter · PM/SM facilitates alignment · Tech Lead confirms high-level feasibility · Stakeholder(s) approve and sign off.",
+  artifacts:["Project Vision &amp; Charter (problem, goals, success metrics)","Glossary of domain terms","Stakeholder map with decision authority","Assumptions log","Constraints log (budget, timeline, regulatory, technical)","Risk register (seeded)","Scope statement and explicit non-goals"],
+  tools:["Notion / Confluence - living charter","Miro / Excalidraw - stakeholder &amp; context map","Risk register in the PM tool or a shared sheet"],
+  deliverables:["A signed-off Project Charter every team member has read and can restate."],
+  exit:["Vision statement signed by the accountable stakeholder(s)","Success metrics are numeric and measurable, not aspirational adjectives","Non-goals explicitly listed, not just implied by omission","Glossary covers every domain term appearing more than once","Top risks and assumptions logged with an owner each","Stakeholder map complete with each person's decision authority"],
+  review:"Conception Alignment Workshop - a synchronous working session, not an email thread. The PO presents the draft; every role asks its standard questions; the stakeholder signs off in the room or within 48 hours.",
+  validation:"<b>Same-Page Test:</b> the PM asks three team members, independently and without conferring, to restate the project's goal and one non-goal in a single sentence each. If the restatements meaningfully diverge, the gate fails and the charter is revised.",
+  comms:["What problem are we actually solving, and for whom?","What does success look like, in numbers we can check later?","What are we explicitly NOT building in this phase?","What assumptions are we making that, if wrong, would change the plan?","Who has authority to change scope later, and where do we log that decision?"],
+  fails:["Building the right solution to the wrong problem","Scope creep with no non-goals statement to point back to","Discovering late that two stakeholders never agreed on what success means"],
+  grounding:"Grounded in the course's framing that software built without analysis, design, modeling, verification and validation risks missing user needs and being hard to maintain - and in the cahier des charges process (client commissions the need, then the document is refined jointly to clarify domain-specific detail). The Standish Group Chaos Report line quoted in the source material - smaller, more focused feature sets produce more value - is the explicit justification for the mandatory Non-Goals field.",
+  subs:[
+    {name:"Vision &amp; Charter",d:"The anchor document: problem statement, target users, 3–5 measurable goals, success metrics with a measurement method and deadline."},
+    {name:"Glossary",d:"One sentence per domain term, no circular definitions, with an owner to ask when a definition needs to change. The cheapest ambiguity fix that exists."},
+    {name:"Stakeholder Map",d:"Name, role, decision authority and engagement level for everyone who can influence or approve. Prevents 'who actually signs this off?' later."},
+    {name:"Risks &amp; Assumptions",d:"Every assumption gets a confidence level and an owner; every risk gets likelihood, impact and an owner. Verbal risks don't count."},
+    {name:"Scope &amp; Non-Goals",d:"What's in, and - critically - what is explicitly out. Non-goals are the only defence against scope creep that actually works."}
+  ]
+},
+{
+  n:2,id:"requirements",name:"Requirements Engineering",
+  tag:"Turn the vision into requirements two people can't read two different ways.",
+  objective:"Convert the shared vision into a complete, prioritized, testable set of functional and non-functional requirements, written so that a requirement and its test are two sides of the same sentence.",
+  entry:"Stage 1 gate passed - signed Project Charter exists.",
+  responsible:"PO/BA owns the BRD and Product Backlog · Tech Lead owns the SRS · UI/UX owns personas and journeys · QA reviews every story for ambiguity as it is written, not after.",
+  artifacts:["Business Requirements Document (BRD) - the why/what in business language","Software Requirements Specification (SRS) - the technical how","Product Backlog of user stories (Name, ID, Role, Description, Type, State, Size, Priority)","Acceptance criteria per story (Given/When/Then)","Personas and use-case / user-journey diagrams","Non-functional requirements table structured by ISO/IEC 25010","Business rules register (separate from individual stories)","Edge-case log per story"],
+  tools:["Jira or Linear - backlog with hierarchy and custom fields","Notion / Confluence - BRD and SRS as living documents","Miro / Figma - personas and journey maps","draw.io, Lucidchart or Mermaid - use-case and BPMN diagrams"],
+  deliverables:["A prioritized, INVEST-quality backlog with acceptance criteria on every story planned for the next two sprints."],
+  exit:["Every story follows \"As a [role], I want [goal], so that [reason]\" with ≥1 acceptance criterion","NFRs specified per ISO/IEC 25010 characteristic where relevant","Edge cases (invalid, empty, boundary, exceptional) enumerated per story","Business rules documented once, centrally, and referenced - never duplicated inline","BRD and SRS exist separately and do not contradict each other"],
+  review:"Weekly Backlog Refinement, PO-led, whole team present. QA raises ambiguity flags live rather than after the meeting.",
+  validation:"<b>Testability Check:</b> for every new or changed story, QA must be able to draft at least one test scenario directly from the acceptance criteria with zero clarifying questions. If QA can't, the story is not Ready and returns for rewriting.",
+  comms:["Is this acceptance criterion something two different testers would test the same way?","What happens on invalid input, empty input, and the boundary value?","Which ISO 25010 quality attributes matter here, and what's the numeric target?","Does this contradict any existing requirement or business rule?","Who approved this requirement, and when?"],
+  fails:["Stories that read as complete but are actually ambiguous","Missing edge cases surfacing for the first time in production","Non-functional requirements nobody designs or tests for because they were never explicit"],
+  grounding:"Grounded in the BRD/SRS distinction and the PO / Business Analyst mandate from “Les rôles dans l'équipe de développement logiciel”, the Scrum User Story artifact and its eight fields, and the template “En tant que… je veux… afin de…” with the course's own training-session and train-ticket examples. The course names performance, usability, functionality, security and compatibility as example non-functional categories under ISO/IEC 25010; this framework extends that to the standard's full eight characteristics.",
+  subs:[
+    {name:"BRD - business language",d:"What the business needs and why, written so a non-technical stakeholder can approve it. Owned by the PO/BA."},
+    {name:"SRS - technical spec",d:"How those needs will be built: data stores, platform choices, integration points. Owned by the Tech Lead."},
+    {name:"User Stories",d:"As a [role], I want [goal], so that [reason]. Plus the eight Scrum story fields: Name, ID, Role, Description, Type, State, Size, Priority."},
+    {name:"Acceptance Criteria",d:"Given/When/Then, and mandatory. This is the exact text QA turns into test scenarios - so the same sentence defines 'done' for the developer and 'pass' for the tester."},
+    {name:"Non-Functional (ISO 25010)",d:"Functional suitability, performance efficiency, compatibility, usability, reliability, security, maintainability, portability - each with a numeric target and a way to measure it."},
+    {name:"Edge Cases &amp; Business Rules",d:"Invalid input, empty input, boundary values, exceptional flows. Business rules live in one central register and get referenced, never copy-pasted into stories."}
+  ]
+},
+{
+  n:3,id:"validation",name:"Requirements Validation",
+  tag:"Prove the requirements are unambiguous before anyone designs or codes.",
+  objective:"Prove, before design or implementation begins, that the requirement set is complete, internally consistent, and unambiguous. This is the gate aimed most directly at the team's number-one failure: different people reading the same requirement differently.",
+  entry:"Draft BRD, SRS and backlog exist for the scope being validated.",
+  responsible:"QA leads the review · PO and Tech Lead co-review · the accountable Stakeholder approves anything that changed materially since Stage 1.",
+  artifacts:["Requirements Review Checklist (completeness, consistency, ambiguity, testability)","Contradiction log","Missing-requirement log","Sign-off record naming who approved what, and when"],
+  tools:["Confluence / Notion for checklist tracking","The team's decision log for recording sign-off"],
+  deliverables:["A backlog in which every story marked Ready has formally passed static review."],
+  exit:["Independently-testable acceptance criteria on every story in scope","No contradiction with any other approved story or business rule","No undefined term - every domain term appears in the Glossary","Story estimated by the people who will build it","Dependencies identified and either resolved or explicitly sequenced","Relevant NFRs attached","Explicit PO approval recorded"],
+  review:"A working session, not an email chain - this is a static test in the course's own sense: reviewing requirements to identify errors and inconsistencies, run as a scheduled meeting with the checklist worked line by line.",
+  validation:"<b>Two-Person Restatement Test:</b> the Tech Lead and one Developer independently write one sentence describing what a story does. If the two sentences differ in meaning, the story fails and returns to Stage 2 - regardless of time pressure.",
+  comms:["Read this requirement aloud - does everyone agree what \"done\" means, without further discussion?","Does this contradict anything already approved?","Is every term here also defined in the Glossary?","Could someone write a test for this right now, using only this text?","What is explicitly out of scope for this specific story?"],
+  fails:["The team's core problem - divergent interpretation - caught here instead of after a wasted sprint","Contradictory requirements shipped because nobody cross-checked the backlog as a whole","Undefined jargon causing silent misunderstanding across roles"],
+  grounding:"Grounded in the course's Verification-vs-Validation distinction, its static-testing catalogue (requirements review, design review, code inspection - all performable before code exists, because static tests can be done from day one), and the Tester's explicit mandate to review requirements and detect ambiguities, inconsistencies and gaps. It is a distinct gate, separate from Stage 2, because requirements validation deserves its own stop-the-line moment.",
+  subs:[
+    {name:"Review Checklist",d:"Eight questions worked line by line: testable? contradictory? undefined terms? edge cases? estimated? dependencies? NFRs? approved by name and date?"},
+    {name:"Ambiguity Detection",d:"QA reads for the sentence that could go two ways. Anything a tester can't turn into a test without asking a question is ambiguous by definition."},
+    {name:"Contradiction Log",d:"Cross-check the new story against every approved story and business rule. Contradictions compound silently until someone hits them mid-implementation."},
+    {name:"Definition of Ready",d:"The seven-item gate a story must pass before it can enter a sprint. If it fails, it does not enter - this is the rule that eliminates rework from starting too early."}
+  ]
+},
+{
+  n:4,id:"architecture",name:"Architecture &amp; Technical Design",
+  tag:"Decide HOW the system is built, and write down why.",
+  objective:"Decide how the system will be built - at system and module level - and record the reasoning, so implementation never depends on knowledge that lives only in one person's head.",
+  entry:"Stage 3 gate passed for the scope being designed.",
+  responsible:"Tech Lead owns architecture and ADRs · UI/UX owns interface design · developers contribute detailed module design · QA reviews for testability, accessibility, and conformance to the written requirement.",
+  artifacts:["High-level architecture diagram - components, hosting, major tech choices","Detailed design per module","API contracts (versioned)","Database schema / data model","Architecture Decision Records (ADRs)","Coding conventions document","Repository / folder structure standard","High-fidelity UI designs and design-system reference"],
+  tools:["draw.io, Lucidchart or Mermaid - architecture and sequence diagrams","Figma - UI design","In-repo ADR template (e.g. /docs/adr/NNNN-title.md)"],
+  deliverables:["A signed-off architecture and design package for every scope entering the next sprints."],
+  exit:["Every significant decision has an ADR: context, decision, alternatives, consequences","API contracts versioned and reviewed jointly by Frontend and Backend","Database schema checked against the NFRs from Stage 2","UI designs reviewed against the written requirement and accessibility standards","Coding conventions published in the repository, not assumed as tribal knowledge"],
+  review:"Design Review meeting: the Tech Lead presents, every developer who will implement attends, and QA specifically checks whether the design matches the written requirement and screens for contrast, accessibility and logical gaps.",
+  validation:"<b>Two-Reader Test:</b> a developer who did not write a given ADR must explain the decision and its trade-off back to the Tech Lead, unaided, in their own words. If they can't, the ADR is rewritten before implementation starts.",
+  comms:["What alternatives did we consider, and why were they rejected?","What happens to this design if the NFR target isn't met?","Does the UI match the written requirement, not just the general idea of it?","Is this accessible - contrast, screen reader, keyboard - or is there a logged reason it isn't yet?","What's the blast radius if this decision turns out to be wrong?"],
+  fails:["Architecture decisions that exist only in one person's memory","Frontend and Backend building against two different mental models of the same API","Off-brief or inaccessible UI shipped because nobody checked it against the requirement"],
+  grounding:"Grounded in the V-model's split between conception préliminaire (global architecture, tooling and language choices, module decomposition) and conception détaillée (per-module algorithm design). The QA checklist for this stage reuses almost verbatim the Tester's design-review duty from the source material: reviewing designs for colour, accessibility and logical problems, and comparing the design back to the written requirements.",
+  subs:[
+    {name:"Architecture Diagram",d:"Components, hosting, data flow and the major technology choices - the picture a new developer sees first."},
+    {name:"ADRs",d:"Context, decision, alternatives considered and why they were rejected, consequences. The 'why' is what future developers need; the 'what' is usually visible in the code."},
+    {name:"API Contracts",d:"Versioned and agreed in writing by Frontend and Backend before either starts coding. The single most common silent-mismatch point in a small team."},
+    {name:"Database Design",d:"Schema and data model, explicitly checked against the non-functional targets set in Stage 2."},
+    {name:"UI/UX Designs",d:"Wireframes first to validate ideas cheaply, then high-fidelity designs - reviewed against the written requirement and for accessibility, not just visual polish."},
+    {name:"Conventions &amp; Structure",d:"Coding standards and folder structure, published in the repo. Tribal knowledge is not a convention."}
+  ]
+},
+{
+  n:5,id:"breakdown",name:"Task Breakdown",
+  tag:"Cut validated, designed work into pieces small enough to estimate honestly.",
+  objective:"Decompose validated, designed requirements into units small enough to estimate accurately and complete within a single sprint, with exactly one owner per unit.",
+  entry:"Stage 4 gate passed.",
+  responsible:"Tech Lead and PO break Epics into Features and Stories · the Dev Team breaks Stories into Tasks and Subtasks during refinement · every Task has exactly one named owner.",
+  artifacts:["Epic → Feature → Story → Task → Subtask hierarchy in the backlog tool, with an ownership field on every task."],
+  tools:["Jira or Linear (native hierarchy support)","A work-breakdown sheet only if the tool can't represent five levels"],
+  deliverables:["A backlog where the next one to two sprints of Stories are broken into Tasks of roughly one day each."],
+  exit:["No task exists without a named owner","No task estimated at more than ~1 day of focused work","Every task traceable up to a Story and that Story's acceptance criteria","Task list reviewed with the person who will do the work, not assigned unilaterally"],
+  review:"Backlog refinement / breakdown session, Tech Lead facilitating, done just-in-time - roughly one sprint ahead - rather than all at once at kickoff.",
+  validation:"<b>Ownership Roll Call:</b> in Sprint Planning the PM reads every candidate task title aloud. If nobody can name the owner within three seconds, the task is not ready to enter the sprint.",
+  comms:["Can this task realistically be finished in under a day by the person assigned?","Does everyone agree who owns this, not just who is tagged on the ticket?","Which Story and which acceptance criterion does this trace back to?","Are there hidden dependencies between this task and another task or person?"],
+  fails:["Tasks too large to estimate honestly, which quietly become the sprint's biggest risk","Orphaned work that nobody actually owns","Work started that doesn't map back to any approved requirement"],
+  grounding:"Builds on the Scrum Story artifact and backlog structure documented in the source material. The Epic/Feature/Task/Subtask layers above and below Story are added from standard Agile practice, since the source material's backlog examples stop at Story-level granularity.",
+  subs:[
+    {name:"Epic → Subtask",d:"Five levels: Epic, Feature, Story, Task, Subtask. Stories are what get estimated; tasks are what get done."},
+    {name:"One Owner Per Task",d:"Exactly one named person, not a team and not a tag. 'The team owns it' means nobody owns it."},
+    {name:"One-Day Rule",d:"If a task is bigger than roughly a day of focused work, it isn't broken down enough to estimate honestly."},
+    {name:"Traceability",d:"Every task links up to a Story and a specific acceptance criterion. Work that traces to nothing shouldn't exist."}
+  ]
+},
+{
+  n:6,id:"planning",name:"Sprint Planning",
+  tag:"Commit only to work that has already earned its way in.",
+  objective:"Commit the team to a realistic, achievable Sprint Goal built only from work that satisfies the Definition of Ready - never from whatever happens to be at the top of a list.",
+  entry:"Task Breakdown complete for candidate stories; Definition of Ready satisfied.",
+  responsible:"PO presents priority order · the Dev Team pulls work and estimates it · the Scrum Master facilitates and enforces the timebox · the Tech Lead flags technical dependencies and risk.",
+  artifacts:["Sprint Backlog","Sprint Goal (one sentence)","Capacity / velocity calculation","Dependency map"],
+  tools:["Jira / Linear sprint board","Planning poker (cards or an app) for estimation"],
+  deliverables:["A committed Sprint Backlog with a single-sentence Sprint Goal every team member can repeat unaided."],
+  exit:["Every item satisfies the Definition of Ready","Total estimated size at or below historical velocity","The Sprint Goal is one sentence every member can restate in their own words","Blockers and dependencies named with an owner and a resolution plan"],
+  review:"Sprint Planning Meeting, timeboxed. As the course frames it: the team decides which Product Backlog items to take into the next iteration, turns them into tasks, and agrees how it will organize itself.",
+  validation:"<b>Sprint Goal Echo:</b> at the close of planning each member states the Sprint Goal in their own words with no notes. If wording diverges materially, planning isn't finished.",
+  comms:["What is this sprint's one-sentence goal?","What could stop us from hitting it, and who owns removing that obstacle?","Is anyone silently over capacity?","Which stories are must-hit, and which are stretch?"],
+  fails:["Overcommitment that guarantees a missed sprint before it starts","A sprint that is a pile of tickets with no unifying goal","Dependencies discovered mid-sprint instead of during planning"],
+  grounding:"The Sprint Planning Meeting, the Sprint Goal / Product Goal artifacts, and the team-composition guidance (6–10 people, cross-functional: developers, testers, DB specialist, network expert, functional analyst, designer, systems engineer) are grounded in the course material on Scrum.",
+  subs:[
+    {name:"Prioritization",d:"The PO presents order; the team pulls. Priority is a PO decision, capacity is a team decision - never the reverse."},
+    {name:"Estimation",d:"Estimated by the people who will do the work, using planning poker. An estimate from someone else is a guess."},
+    {name:"Sprint Goal",d:"One sentence. If the sprint is just a list of tickets with no unifying goal, there's nothing to protect when pressure arrives."},
+    {name:"Dependencies &amp; Blockers",d:"Named, with an owner and a resolution plan. 'We'll figure it out' is not a plan."},
+    {name:"Definition of Ready",d:"The gate from Stage 3. Nothing enters the sprint without passing it - this is what stops mid-sprint discovery."}
+  ]
+},
+{
+  n:7,id:"development",name:"Development",
+  tag:"Ship reviewed, tested, integrated software every single day.",
+  objective:"Turn committed Sprint Backlog items into working, peer-reviewed, tested and integrated software continuously - not in a batch at the end of the sprint.",
+  entry:"Sprint Planning gate passed.",
+  responsible:"Developers own implementation and unit tests · peer reviewers own code review · Tech Lead owns standards enforcement · Scrum Master owns daily facilitation and blocker removal.",
+  artifacts:["Feature branches and pull requests","Code review comments and approvals","Updated documentation","A Definition of Done checklist attached to every item"],
+  tools:["GitHub / GitLab - branching, PRs, review","A CI pipeline (lint, build, test on every push)","Slack / Teams for async communication","The Kanban board - To Do / In Progress / In Review / Done"],
+  deliverables:["Daily-integrated, reviewed, CI-green code with the board kept accurately up to date."],
+  exit:["Code merged to the main branch","Unit tests written and passing","Peer-reviewed and approved by at least one other developer","CI green: lint, build and test suite all pass","Documentation updated wherever behaviour changed","No known regression introduced","The item's acceptance criteria are demonstrably met"],
+  review:"Daily Scrum (15 min, strictly timeboxed): what I finished, what I'll do next, what's blocking me - with the board and burndown updated live. Pull Request review runs continuously, checklist-based, with at least one approver. Pair programming is used for high-risk or high-ambiguity tasks.",
+  validation:"<b>PR Traceability Check:</b> every pull request description must link to its Story/Task and restate the acceptance criterion it satisfies. A PR missing that link is not eligible for review.",
+  comms:["What did I finish yesterday, what will I finish today, and what's blocking me?","Does this PR trace to an approved Story and its acceptance criteria?","Would a teammate who didn't write this code understand it from the review alone?","Did I update docs and comments to match what I actually built, not what was planned?"],
+  fails:["Code that runs locally but was never checked against the actual requirement","Silent scope drift between what was planned and what got built","Undocumented tribal knowledge that only exists in one developer's head"],
+  grounding:"The Daily Scrum structure (did / will do / blockers) and the Scrum board and burndown mechanics come directly from the course material on Scrum. Pairing, collective code ownership and continuous integration are layered in from XP, whose focus on concrete programming practice complements Scrum's silence on engineering technique.",
+  subs:[
+    {name:"Branching Strategy",d:"Trunk-based with short-lived feature branches (≤2 days). Chosen over GitFlow because a small team suffers more from merge drift on long branches than it gains from release-train ceremony. Use GitFlow only if maintaining multiple released versions in parallel."},
+    {name:"Commit Conventions",d:"Conventional Commits - feat:, fix:, chore:, docs:, test:, refactor: - so the history doubles as a readable changelog."},
+    {name:"Pull Request Process",d:"Every PR links to its Story and restates the acceptance criterion it satisfies. No link, no review."},
+    {name:"Code Review",d:"At least one approving reviewer, checklist-based. Review is where knowledge spreads, not just where bugs are caught."},
+    {name:"Pair Programming",d:"Reserved for high-risk or high-ambiguity tasks. Two people sharing context on hard code is cheaper than one person guessing."},
+    {name:"Daily Scrum",d:"15 minutes, strict. Finished / next / blocked. Board and burndown updated live - a ceremony that stops producing artifacts has stopped working."},
+    {name:"Definition of Done",d:"Merged, unit-tested, peer-reviewed, CI green, docs updated, no known regression, acceptance criteria demonstrably met."}
+  ]
+},
+{
+  n:8,id:"testing",name:"Testing &amp; Quality Assurance",
+  tag:"Prove the system does what was agreed - and that it's actually useful.",
+  objective:"Independently prove two different things: that the system does what the team agreed to build (verification), and that what the team agreed to build is genuinely useful to the user (validation) - at every level, from a single function to the full release candidate.",
+  entry:"For a single item: the Definition of Done has been passed. For full regression/UAT: a release candidate build is available.",
+  responsible:"Developers own unit tests as part of Definition of Done · QA owns integration, system, regression and exploratory test design and execution · PO owns UAT sign-off · Tech Lead owns test-environment parity with production.",
+  artifacts:["Test plan","Test scenarios and cases, each traced to an acceptance criterion","Test data sets","Defect reports","Test summary report","Coverage report","Requirement ↔ test-case traceability matrix"],
+  tools:["Jira + Xray, TestRail, or a structured sheet for very small teams","Postman - API testing","Playwright, Cypress or Selenium - UI automation","SonarQube or a language-native coverage tool"],
+  deliverables:["A signed test summary report and an explicit go/no-go recommendation for release."],
+  exit:["Smoke test passes on the release candidate","All planned test cases executed, or explicitly waived with an owner's signature","100% of Critical/High defects closed, or explicitly accepted by the PO with a documented reason","The regression suite is green","The traceability matrix shows every acceptance criterion has at least one passing test","UAT sign-off obtained from the Product Owner"],
+  review:"The Test Summary Report is reviewed at the Sprint Review / Release Readiness meeting with an explicit go/no-go statement.",
+  validation:"<b>Requirement-to-Test Trace:</b> for a sample of stories QA pulls the acceptance criterion and shows the exact test case that proves it, live. Any sampled story without a traceable test fails the gate for the whole batch.",
+  comms:["Are we testing what was written, or what we assume was meant?","Which quality attribute does this specific test actually exercise?","Has this defect been seen before? Is it new, or a regression?","Is the environment we're testing in representative of production?","In one sentence, what's our confidence this release is safe to ship?"],
+  fails:["Bugs discovered in production instead of before release","The core ambiguity failure recurring at test-writing time instead of requirements time","Regressions silently reintroduced by an earlier fix"],
+  grounding:"This stage draws on the source material more than any other: Concepts de base des tests logiciels (V&amp;V, static/dynamic, test levels and types, smoke/retest/regression), Techniques de tests en boîte noire (five techniques with worked exercises), Whitebox - Tests techniques (definition and purpose), Rédaction des scénarios de tests (the four-step method with a worked Sign-Up example), and the Tester mandate from Les rôles dans l'équipe de développement logiciel.",
+  subs:[
+    {name:"Verification vs Validation",d:"Verification: are we building the product correctly - conformance to BRD/SRS/stories. Validation: are we building the correct product - does it actually satisfy the user. A system can pass every verification check and still fail validation if the requirement itself was wrong."},
+    {name:"Static vs Dynamic",d:"Static testing needs no execution - requirements review, design review, code inspection - and can start on day one. Dynamic testing runs the code: input → processing → output, compared against expectation. Stages 1–4 of this framework are entirely static testing."},
+    {name:"Test Levels",d:"Unit → component integration → system → acceptance. Where a product spans multiple systems (mobile app + website), each system goes through unit → integration → system independently first, and only then is system-integration testing performed between them."},
+    {name:"Test Types",d:"Functional, non-functional (a category, not one type - performance, usability, security, compatibility per ISO 25010), black-box, white-box, grey-box, static, dynamic, retesting, regression, smoke."},
+    {name:"Black-Box Techniques",d:"Five techniques: equivalence partitioning, boundary value analysis, decision table, state transition, pairwise. Rule of thumb from the course: black-box alone often suffices for simple applications; critical or high-risk systems also need white-box."},
+    {name:"White-Box Techniques",d:"Examines internal structure - code, APIs, database - to verify the logic is right, not just that the output looks right. Coverage criteria: statement, branch/decision, condition, path. Cyclomatic complexity is a useful proxy for how many test cases a function needs."},
+    {name:"Writing Test Scenarios",d:"Four steps: understand the requirement → identify functionalities → identify user actions (normal, incorrect, exceptional) → write executable scenarios with steps, test data and expected result for both valid and invalid paths."},
+    {name:"Defect Lifecycle",d:"New → Triaged → Assigned → Resolved → Retested → Closed or Reopened. Retesting repeats the exact original steps; regression testing runs alongside every fix to confirm nothing else broke."},
+    {name:"Smoke Test &amp; UAT",d:"Smoke is the entry gate to any deeper cycle - fast, shallow pass on core functionality; a fail rejects the build outright. UAT is the final validation gate: the PO confirms the system is ready for real use."}
+  ]
+},
+{
+  n:9,id:"deployment",name:"Deployment &amp; Release",
+  tag:"Ship safely, with a fast, rehearsed way back.",
+  objective:"Ship a validated release safely, and guarantee that if something goes wrong the team has a fast, already-tested way back - not one improvised under pressure.",
+  entry:"Stage 8 gate passed - UAT sign-off obtained.",
+  responsible:"DevOps owns pipeline, environments and rollback · Tech Lead approves the release · PM schedules and communicates it · QA gives final go/no-go input.",
+  artifacts:["Release checklist","Deployment runbook","Rollback plan","Release notes","Monitoring dashboard","Incident response plan"],
+  tools:["CI/CD - GitHub Actions, GitLab CI or Jenkins","Infrastructure-as-code (e.g. Terraform) where applicable","Monitoring - Grafana, Datadog or Sentry","A status page for stakeholder/customer communication"],
+  deliverables:["A deployed release running on a monitored, healthy production system."],
+  exit:["Release checklist 100% complete","Rollback plan has been tested, not just written","Monitoring and alerts configured for the new behaviour specifically","Release notes published","Stakeholders notified per the communication plan"],
+  review:"Go/No-Go meeting immediately before release, plus a scheduled post-deploy health check (for example at T+1 hour and T+24 hours).",
+  validation:"<b>Rollback Drill:</b> before the first production release through any new pipeline, the team actually executes a rollback in staging and times it. If nobody can complete it inside the target window, the pipeline is not release-ready.",
+  comms:["If this breaks in the first hour, what's the exact rollback command, and who runs it?","What does \"the release is healthy\" look like on the dashboard, precisely?","Who is on call, and how are they reached?","What changed that support or customer-facing teams need to know about?"],
+  fails:["Releases with a rollback plan that was never actually tested","Alerts that don't exist for the exact new behaviour that just shipped","Stakeholders blindsided by a change they should have known about"],
+  grounding:"The course material stops at acceptance testing and mise en situation (installation, configuration and putting the system into use). This stage is built entirely from industry deployment and release-engineering practice, following the brief's instruction to merge in strong outside practice where the source material is silent.",
+  subs:[
+    {name:"Staging → Production",d:"Environments that actually resemble production, because a test in an unrepresentative environment proves very little."},
+    {name:"Release Checklist",d:"Smoke passed, Critical/High defects closed, regression green, rollback drilled, alerts configured, notes published, stakeholders notified, on-call named."},
+    {name:"Rollback Plan",d:"Tested, not just written - and timed. Looking up the rollback command under pressure is where minutes become hours."},
+    {name:"Monitoring",d:"Alerts for the specific new behaviour in this release, not just the pre-existing baseline. Generic monitoring catches only generic problems."},
+    {name:"Incident Response",d:"Named on-call owner, a reachable escalation path, and a blameless postmortem template that names process gaps rather than people."}
+  ]
+},
+{
+  n:10,id:"retro",name:"Retrospective &amp; Continuous Improvement",
+  tag:"Turn what just happened into one owned change before the next cycle.",
+  objective:"Convert what just happened - good and bad - into a small number of concrete, owned process changes before the next cycle begins, so the framework keeps improving rather than calcifying.",
+  entry:"A sprint or a release has just closed.",
+  responsible:"Scrum Master facilitates · the whole team participates · PM tracks action items through to actual completion.",
+  artifacts:["Retrospective board (Start/Stop/Continue, or the Mood Board format)","Action item list with an owner and due date on every item","Updated risk register"],
+  tools:["Miro, FigJam or Retrium for the board","The backlog tool, so action items are tracked as real, estimated work - not wishes"],
+  deliverables:["One to three concrete process changes, each with a named owner, entered into the very next Sprint Backlog as real tasks."],
+  exit:["Every action item has an owner and a due date","At least one action item scheduled into the next sprint, not \"someday\"","The retrospective record archived so themes can be tracked across sprints"],
+  review:"Sprint Retrospective, timeboxed, held at the same time and place as other ceremonies to reduce overhead, using the Mood Board technique: each participant freely shares impressions of the sprint, and the team names what worked, what didn't, and what to change.",
+  validation:"<b>Three-Retro Pattern Check:</b> every quarter the PM reviews the last three to six retrospectives for a repeating, unresolved theme. A theme that has surfaced three or more times without a shipped fix is escalated to Stakeholder level as a structural risk - not treated as the team failing to try harder.",
+  comms:["What should we start doing, stop doing, and keep doing?","Of everything raised today, what is the one thing we commit to changing next sprint?","Did we actually complete last retro's action items? If not, why not?","Is this a one-off, or the third time we've raised it?"],
+  fails:["Retrospectives that surface feelings but produce no actual change","The same complaint recurring for months because it was never converted into a tracked task","Team fatigue from friction that keeps getting named but never fixed"],
+  grounding:"The Sprint Retrospective and Mood Board technique come directly from the course material on Scrum: each participant shares impressions freely, the team capitalizes on successes, identifies difficulties, and agrees together on improvement paths for the next sprints. Lean's continuous-improvement lens is layered on top specifically to make retrospective outputs enforceable, tracked work rather than an aspirational conversation.",
+  subs:[
+    {name:"Mood Board",d:"Each participant shares impressions of the sprint freely, before the team converges on what to change. Feelings first, decisions second."},
+    {name:"Action Items",d:"Maximum three, each with an owner and a due date, entered into the next Sprint Backlog as real estimated work - not a wish list."},
+    {name:"Pattern Check",d:"Quarterly review of the last 3–6 retros. A theme raised three times without a shipped fix is a structural problem, not a motivation problem - escalate it."}
+  ]
+}
+];
+
+const GATES = [
+{n:1,name:"Charter Sign-off",between:"Conception → Requirements",passes:"The Same-Page Test succeeds and the accountable stakeholder(s) sign the charter.",approver:"Stakeholder(s), facilitated by PM/SM"},
+{n:2,name:"Backlog Testability",between:"Requirements → Validation",passes:"Every story in scope passes the Testability Check - QA can write a test from the acceptance criteria alone.",approver:"Product Owner"},
+{n:3,name:"Definition of Ready",between:"Validation → Architecture",passes:"The Two-Person Restatement Test succeeds on every story in scope.",approver:"QA + Product Owner"},
+{n:4,name:"Design Sign-off",between:"Architecture → Task Breakdown",passes:"Every ADR passes the Two-Reader Test and QA's design review is complete.",approver:"Tech Lead"},
+{n:5,name:"Ownership Roll Call",between:"Task Breakdown → Sprint Planning",passes:"Every task has a named owner and is ≤ ~1 day of work.",approver:"Tech Lead / PM"},
+{n:6,name:"Sprint Commitment",between:"Sprint Planning → Development",passes:"The Sprint Goal Echo succeeds and capacity is not exceeded.",approver:"Whole team, facilitated by Scrum Master"},
+{n:7,name:"Definition of Done",between:"Development → Testing",passes:"Every Definition of Done item is checked and the PR Traceability Check succeeds.",approver:"Peer reviewer + Tech Lead"},
+{n:8,name:"Release Readiness",between:"Testing → Deployment",passes:"The Requirement-to-Test Trace succeeds, Critical/High defects are closed, and UAT is signed.",approver:"QA + Product Owner"},
+{n:9,name:"Go / No-Go",between:"Deployment execution",passes:"The Rollback Drill has been performed and timed, and the release checklist is complete.",approver:"Tech Lead"},
+{n:10,name:"Retro Commitment",between:"Retrospective → next cycle",passes:"At least one action item is scheduled into the very next sprint with a named owner.",approver:"Scrum Master / PM"}
+];
+
+/* =====================================================================
+   DATA - METHODOLOGY
+   ===================================================================== */
+const METHODOLOGY = {
+  decision:"Scrum-Backbone Hybrid",
+  oneLiner:"Scrum supplies the cadence, roles and ceremonies; XP supplies the engineering discipline Scrum is silent on; Kanban supplies the visual flow layer inside each sprint; Lean supplies the continuous-improvement lens for retrospectives; and a Shape-Up-inspired shaping gate is inserted before Sprint Planning so nothing enters a sprint until it has survived a dedicated round of ambiguity-hunting.",
+  layers:[
+    {name:"Scrum",role:"Cadence, roles &amp; ceremonies",cls:"y"},
+    {name:"XP",role:"Engineering discipline",cls:"p"},
+    {name:"Kanban",role:"Flow visualization",cls:"g"},
+    {name:"Lean",role:"Continuous improvement",cls:""},
+    {name:"Shape Up",role:"Pre-sprint shaping gate",cls:""}
+  ],
+  comparison:{
+    headers:["Method","Structure","Engineering practice guidance","Ambiguity resistance","Fit","Verdict"],
+    rows:[
+      ["Waterfall / V-Model","Strictly sequential; each phase gates the next","Not specified - silent on how code gets written","High up front (heavy spec review) but brittle later - no mechanism to correct a misunderstanding found mid-build","Poor","Rejected as primary framework"],
+      ["Scrum","Fixed-length sprints with defined roles, events, artifacts","Not specified - silent on coding practices","High - ceremonies force shared understanding and roles are named and accountable","Strong","Adopted as the structural backbone"],
+      ["Kanban","Continuous flow, WIP limits, no fixed iteration","Not specified","Weak alone - visualizes work but does not require anyone to talk","Partial","Adopted narrowly as the in-sprint board layer"],
+      ["Extreme Programming (XP)","Engineering-practice-first, paired with an iteration cadence","Strong - pairing, TDD, collective ownership, CI, simple design, refactoring","High at code level - pairing means two people always share context","Strong but incomplete alone","Adopted as the engineering-practice layer (Stage 7)"],
+      ["Shape Up","6-week bets with fixed appetite, no daily standups, cool-down","Not specified","Very high before work starts - shaping exists to de-risk a problem before anyone commits","Built for larger orgs","Adopted narrowly - the shaping discipline only"],
+      ["Lean Software Development","Set of principles, not a ceremony framework","Eliminate waste, amplify learning, decide late, build integrity in","Indirect - reduces rework but provides no specific mechanism","Strong lens, not a framework","Adopted as the retrospective lens (Stage 10)"]
+    ]
+  },
+  whyNot:[
+    {q:"Why not pure Scrum?",a:"Scrum intentionally has no opinion on how code gets written, reviewed or tested - exactly the layer where this team's rework has been happening. XP fills that gap."},
+    {q:"Why not pure Kanban?",a:"Kanban visualizes flow but has no forcing function for shared understanding - no planning ceremony, no retrospective, no defined roles. For a team whose core failure is communication, removing Scrum's ceremonies removes the very mechanism that fixes the problem."},
+    {q:"Why not pure Shape Up?",a:"Shape Up assumes a larger organization with a dedicated shaping team and cool-down cycles. Six-week appetites and no daily standups are a poor fit for a small team that needs tight daily visibility. The shaping discipline is valuable, so this framework borrows the practice without the full framework."},
+    {q:"Why not Waterfall / V-Model?",a:"The course material's own critique applies directly: rigid once the cahier des charges is signed, a long nine-step path to working software, and late, costly validation. The V-model's genuinely good idea - a verification activity mapped to every development activity - is preserved, but re-mapped onto Agile increments, a mapping the source material itself teaches."}
+  ],
+  symptomMap:{
+    headers:["Symptom the team named","Mechanism that fixes it"],
+    rows:[
+      ["Different members interpret the same requirement differently","Stage 3 Requirements Validation gate - static review plus an ambiguity checklist. No story enters a sprint until QA, Tech Lead and PO independently confirm the same reading."],
+      ["Features don't match intended behaviour","Acceptance criteria are mandatory and are the literal text used to write test scenarios - the same sentence defines 'done' for the developer and 'pass' for QA."],
+      ["Developers assume different requirements","A single accountable Product Owner is the only legitimate source of 'what'. Assumptions get written into the story or the risk log, never left implicit."],
+      ["Work must be redone","Definition of Ready blocks a story from entering a sprint until it is unambiguous, estimated and dependency-free."],
+      ["Responsibilities are unclear","The RACI matrix names exactly one Accountable owner for every activity in every stage."],
+      ["Nobody knows where they stand","Daily Scrum plus a visible Kanban board makes progress and blockers visible every 24 hours."],
+      ["Progress is hard to track","Burndown chart plus a one-sentence Sprint Goal give a single visual source of truth."],
+      ["Time wasted on discussions and corrections","Structured, timeboxed ceremonies replace ad-hoc hallway discussion with scheduled decision points that have an owner and an expected output."]
+    ]
+  },
+  scrumPros:["Product broken into small, understandable, manageable pieces","New requirements queue in the backlog instead of derailing progress","Whole-team visibility improves communication","Client sees working increments on a predictable cadence and gives real feedback"],
+  scrumCons:[
+    {con:"\"Little to no written documentation\" can itself become an ambiguity source",fix:"A lightweight but non-negotiable artifact set per stage (BRD, SRS, ADRs, test scenarios) - enough to remove ambiguity, not enough to become Waterfall again."},
+    {con:"Accountability violation - a developer bypassing the Scrum Master to deal directly with the client",fix:"The RACI matrix makes the PO the only Accountable party for client-facing requirement decisions; each stage states who talks to whom."},
+    {con:"The team doesn't commit - burndown and indicators go unmaintained and tracking breaks down",fix:"Definition of Ready/Done and the validation gates make ceremony outputs mandatory exit criteria, not optional admin."}
+  ]
+};
+
+/* =====================================================================
+   DATA - ROLES
+   ===================================================================== */
+const ROLES = [
+{id:"pm",title:"Project Manager / Scrum Master",aka:"Delivery Lead",
+ mandate:"Owns the health of the process, not the content of the product. Protects the team's time, keeps the Scrum framework honest, removes blockers, and is the single point of truth for \"where are we\".",
+ receives:["Escalations and blockers from every role","Sprint outcomes from the Dev Team","Priorities and roadmap direction from the PO"],
+ produces:["Sprint calendar and facilitation of all ceremonies","Burndown / burn-up chart, updated daily","Risk &amp; decision log","Status reporting to stakeholders"],
+ talks:"Everyone, daily. Escalates cross-team or budget/scope issues to Stakeholders.",
+ grounding:"The Scrum Master is the guarantor of the Scrum process, facilitates the daily/review/retro ceremonies, and maintains the burn-down chart. Classic Chef de Projet duties (planning, budget, resources, delivery) are folded into this role for a small team rather than kept separate."},
+{id:"po",title:"Product Owner / Business Analyst",aka:"Requirements Owner",
+ mandate:"Defines and prioritizes WHAT gets built. Is the single voice of the customer inside the team - if two developers disagree on intent, the PO's answer is final until changed through the backlog, never through a hallway conversation.",
+ receives:["Business needs, constraints and success metrics from Stakeholders","Feasibility and effort signals from the Tech Lead","Ambiguity reports from QA"],
+ produces:["Business Requirements Document (BRD)","Product Backlog of prioritized, INVEST-quality user stories","Acceptance criteria for every story","Sign-off on completed increments"],
+ talks:"Stakeholders upstream, and the whole Dev Team + QA downstream, continuously.",
+ grounding:"The PO builds the product backlog, sets priorities, and validates the delivered increment; the BA writes the SRS/BRD that the tester must review. This framework merges BA and PO into one accountable role for small teams, while keeping the BRD (business language) and SRS (technical) as two distinct, separately-reviewed artifacts."},
+{id:"tl",title:"Tech Lead / Architect",aka:"Engineering Owner",
+ mandate:"Defines and defends HOW the system is built. Owns technical feasibility calls, the architecture, and the non-negotiable engineering standards - coding conventions, review bar, technical debt policy.",
+ receives:["Prioritized backlog from the PO","Non-functional requirements from QA and Stakeholders","Design questions from Frontend/Backend/Mobile developers"],
+ produces:["Software Requirements Specification (SRS)","Architecture Decision Records (ADRs)","System, API and data-model diagrams","Code review standards and the final say on judgment calls"],
+ talks:"PO (feasibility/scope trade-offs), all developers (standards, reviews), QA (testability), DevOps (deployability).",
+ grounding:"The SRS describes how functionality will be developed in detail for the dev team, and the V-model's conception préliminaire covers global architecture, tech/tooling choices and module breakdown. This is a role the source material implies but does not name - added from standard practice, because a team of any size needs one accountable technical owner to prevent exactly the ambiguity the brief describes."},
+{id:"ux",title:"UI/UX Designer",aka:"Design",
+ mandate:"Owns how the product looks and feels before a line of production code is written. Validates ideas cheaply (wireframes) before they get expensive (working software).",
+ receives:["User stories and personas from the PO","Technical constraints from the Tech Lead"],
+ produces:["Wireframes and low-fidelity mockups","High-fidelity UI designs","UX flows / user journey maps","Design system references"],
+ talks:"PO (does this match the story?), Frontend developers (handoff), QA (accessibility &amp; visual conformance).",
+ grounding:"The process starts with a wireframe to validate ideas at low cost. The Tester's explicit design-review duty - checking colour, accessibility, and logic, and comparing the design back to the written requirements - is preserved verbatim as a gate in Stage 4."},
+{id:"fe",title:"Frontend Developer",aka:"Client-side Engineering",
+ mandate:"Turns approved designs into a working, tested user interface.",
+ receives:["Approved UI/UX designs","API contracts from Backend/Tech Lead","Stories and tasks from the Sprint Backlog"],
+ produces:["Working UI code + unit tests","UI documentation where applicable","PRs ready for review"],
+ talks:"Backend Dev (contract alignment), UI/UX (fidelity questions), QA (bug triage).",
+ grounding:"The Frontend Developer transforms the static design into an interactive user interface using HTML, CSS and JavaScript."},
+{id:"be",title:"Backend Developer",aka:"Server-side Engineering",
+ mandate:"Owns the server, data layer and business logic behind the interface.",
+ receives:["Data model and API design from the Tech Lead","Stories and tasks from the Sprint Backlog"],
+ produces:["APIs, services, migrations + unit/integration tests","PRs ready for review"],
+ talks:"Frontend Dev (contract alignment), DevOps (deployability), QA (bug triage).",
+ grounding:"The Backend Developer handles what happens behind the scenes - server, database, admin panel. In an e-commerce site, products are managed and stored in the back end, then surfaced on the front end."},
+{id:"mob",title:"Mobile Developer",aka:"optional - activate per project",
+ mandate:"Owns native or hybrid mobile delivery where the product includes a mobile app.",
+ receives:["Approved UI/UX designs","API contracts"],
+ produces:["Mobile app builds + tests","PRs ready for review"],
+ talks:"Backend Dev, UI/UX, QA.",
+ grounding:"The Mobile Developer builds native or hybrid mobile applications (Android with Java, or iOS with Swift). Included as an optional role - activate only for projects with a mobile deliverable."},
+{id:"qa",title:"QA / Test Engineer",aka:"Quality - the cross-cutting role",
+ mandate:"The one role with a licence to touch every other role's output. Reviews requirements before code exists, reviews design before it is built, and tests the system after it is built. Never works alone; is the team's built-in ambiguity detector.",
+ receives:["Every artifact produced by every other role: BRD/SRS, designs, code, builds"],
+ produces:["Requirements ambiguity/defect reports before Sprint 0 ends","Test scenarios and test cases","Defect reports with reproduction steps","Test summary reports and the go/no-go recommendation"],
+ talks:"Everyone - BA/PO on requirements, UI/UX on design, Devs on defects, PM on release readiness.",
+ grounding:"A software tester never acts alone, and is the cross-cutting role par excellence - responsible for reviewing the work of every other team member to guarantee final quality. This centrality is the single most load-bearing idea imported from the source material: QA is repositioned from 'last gate before ship' to 'reviewer embedded at every gate'."},
+{id:"devops",title:"DevOps / Release Engineer",aka:"may be shared with Backend on very small teams",
+ mandate:"Owns environments, CI/CD pipelines, deployment, monitoring and incident response.",
+ receives:["Release candidates from Development","Test sign-off from QA"],
+ produces:["CI/CD pipeline","Staging/production environments","Release notes, rollback plan, monitoring dashboards"],
+ talks:"Tech Lead (infra decisions), QA (release gate), PM (release calendar).",
+ grounding:"Added entirely from industry best practice because Stage 9 cannot function safely without an accountable owner."},
+{id:"spec",title:"Specialist Roles (as needed)",aka:"Data / Cloud / Security / DBA",
+ mandate:"Deep-expertise contributors brought in for specific projects.",
+ receives:["Scoped technical questions from the Tech Lead"],
+ produces:["Specialist deliverables - data pipelines, infra-as-code, threat models, schema design"],
+ talks:"Tech Lead primarily; QA for anything security- or data-integrity-related.",
+ grounding:"Data science experts, database administrators, AI specialists, cybersecurity experts (ethical hackers) and cloud engineers - engaged on demand, not part of the core cross-functional 6–10 person Scrum team."}
+];
+
+/* =====================================================================
+   DATA - RACI
+   ===================================================================== */
+const RACI = {
+ headers:["Phase","Activity","PM/SM","PO/BA","Tech Lead","Dev","UI/UX","QA","DevOps"],
+ rows:[
+["1. Conception","Draft Project Charter","A","R","C","I","I","C","I"],
+["1. Conception","Facilitate alignment workshop &amp; obtain sign-off","R/A","C","C","I","I","C","I"],
+["1. Conception","Confirm high-level technical feasibility","C","C","R/A","C","I","I","C"],
+["1. Conception","Log risks &amp; assumptions","R/A","C","C","I","I","C","I"],
+["2. Requirements","Write Business Requirements Document","I","R/A","C","I","C","C","I"],
+["2. Requirements","Write Software Requirements Specification","I","C","R/A","C","I","C","C"],
+["2. Requirements","Write user stories &amp; acceptance criteria","I","R/A","C","C","C","C","I"],
+["2. Requirements","Define non-functional requirements (ISO 25010)","I","A","R","C","I","C","C"],
+["3. Validation","Run requirements review checklist","I","C","C","I","I","R/A","I"],
+["3. Validation","Resolve contradictions / ambiguities","I","R/A","C","I","I","C","I"],
+["3. Validation","Sign off Definition of Ready","I","A","C","I","I","R","I"],
+["4. Architecture","Produce architecture diagram &amp; ADRs","I","I","R/A","C","I","C","C"],
+["4. Architecture","Design API contracts &amp; data model","I","I","A","R","I","C","C"],
+["4. Architecture","Produce UI/UX designs","I","C","I","C","R/A","C","I"],
+["4. Architecture","Review design for testability &amp; accessibility","I","I","C","C","C","R/A","I"],
+["5. Breakdown","Break Epics into Features / Stories","I","A","R","C","I","I","I"],
+["5. Breakdown","Break Stories into Tasks / Subtasks","I","I","C","R/A","I","I","I"],
+["5. Breakdown","Assign task ownership","R","I","A","C","I","I","I"],
+["6. Planning","Present prioritized backlog","C","R/A","C","I","I","I","I"],
+["6. Planning","Estimate items","I","I","C","R/A","I","C","I"],
+["6. Planning","Commit to Sprint Goal","R","C","C","A","C","C","C"],
+["6. Planning","Identify dependencies &amp; risks","A","C","R","C","I","C","C"],
+["7. Development","Implement &amp; write unit tests","I","I","C","R/A","I","I","I"],
+["7. Development","Peer code review","I","I","C","R/A","I","I","I"],
+["7. Development","Facilitate Daily Scrum","R/A","I","C","C","I","C","I"],
+["7. Development","Maintain CI pipeline","I","I","C","C","I","I","R/A"],
+["8. Testing","Write test scenarios &amp; test cases","I","C","C","C","I","R/A","I"],
+["8. Testing","Execute tests &amp; log defects","I","I","I","C","I","R/A","I"],
+["8. Testing","Fix &amp; retest defects","I","I","C","R","I","A","I"],
+["8. Testing","UAT sign-off","I","R/A","I","I","I","C","I"],
+["9. Deployment","Prepare release checklist &amp; runbook","I","I","C","C","I","C","R/A"],
+["9. Deployment","Go / No-Go decision","C","C","A","I","I","R","C"],
+["9. Deployment","Execute deployment &amp; monitor","I","I","C","C","I","C","R/A"],
+["9. Deployment","Communicate release to stakeholders","R/A","C","I","I","I","I","C"],
+["10. Retrospective","Facilitate retrospective","R/A","C","C","C","C","C","C"],
+["10. Retrospective","Identify &amp; assign action items","R/A","C","C","C","C","C","C"],
+["10. Retrospective","Track action items to completion","R/A","I","C","C","I","I","I"],
+["10. Retrospective","Escalate repeating unresolved themes","R","A","C","I","I","I","I"]
+ ]
+};
+
+/* =====================================================================
+   DATA - COMMUNICATION FRAMEWORK
+   ===================================================================== */
+const COMMS = {
+ universal:[
+  "What assumptions are we making right now that we haven't said out loud?",
+  "What could be misunderstood about this, if someone only read it and never asked a question?",
+  "What isn't documented yet that someone will need in order to proceed?",
+  "What decisions were made, and where are they written down?",
+  "What changed since the last time we all agreed on this?",
+  "Who approved this, specifically?",
+  "What risks remain open, and who owns each one?",
+  "Is everyone in this room interpreting this the same way - have we actually checked, or just assumed?"
+ ],
+ roleTemplates:[
+  {role:"Project Manager / Scrum Master",asks:[
+    ["Is every ceremony this week timeboxed, attended, and producing its expected artifact?","Self-check + team","Daily / after every ceremony","Ceremonies that quietly stop producing artifacts are the leading indicator that the team has stopped committing to Scrum"],
+    ["Is there a blocker that's been open more than one working day?","Whoever owns the blocker","Daily Scrum","A one-day-old blocker is cheap to fix; a three-day-old one has usually already caused a missed dependency elsewhere"],
+    ["Does everyone agree on the Sprint Goal, in their own words?","Whole team","End of Sprint Planning","The cheapest moment to catch a misaligned sprint, before any work has started"]]},
+  {role:"Product Owner / Business Analyst",asks:[
+    ["Can QA write a test from this acceptance criterion alone, with zero follow-up questions?","QA","Backlog refinement, before marking a story Ready","The cheapest possible ambiguity check - one conversation instead of a sprint of rework"],
+    ["Does this new requirement contradict anything already approved?","Tech Lead + QA","Any time a requirement changes","Contradictions compound silently until someone hits them mid-implementation"],
+    ["Have I actually seen the working increment, or only heard a description of it?","Self, before sign-off","Sprint Review","Validation requires looking at the real thing, not trusting a verbal summary"]]},
+  {role:"Tech Lead",asks:[
+    ["Did we write down why, not just what, for this decision?","Self / whoever proposed it","Any architecture or design decision","The 'why' is what future developers need; the 'what' is usually visible in the code already"],
+    ["Do Frontend and Backend agree on this API contract, in writing?","Frontend + Backend Dev","Before implementation of any new endpoint","The single most common silent-mismatch point in a small team"],
+    ["Is this technical debt tracked, or just known?","Self","Any time a shortcut is taken under deadline pressure","Known-but-untracked debt is functionally identical to invisible debt six months later"]]},
+  {role:"Backend Developer",asks:[
+    ["Does this endpoint's contract match exactly what Frontend is coding against?","Frontend Dev","Before merging any API change","A silent contract drift becomes an integration failure that's expensive to trace back"],
+    ["What's the expected behaviour on invalid or malicious input, not just the happy path?","QA / the acceptance criteria","Before marking implementation complete","The story's edge-case log exists precisely so this isn't a guess"]]},
+  {role:"Frontend Developer",asks:[
+    ["Does this match the approved design, or my memory of the approved design?","UI/UX Designer","Before opening a PR","Small deviations compound into a UI that works but doesn't match what was reviewed"],
+    ["What does the API actually return on an error, not just on success?","Backend Dev","Before building error-state UI","Error states are the most commonly skipped part of frontend implementation"]]},
+  {role:"UI/UX Designer",asks:[
+    ["Does this design still match the written requirement, after the last round of feedback?","Product Owner","Before handoff to Frontend","Iterating on visual feedback can quietly drift a design away from the acceptance criteria"],
+    ["Have I checked this against accessibility standards, not just visual polish?","Self, then QA","Before every handoff","Accessibility issues are dramatically cheaper to fix in Figma than in shipped code"]]},
+  {role:"QA / Test Engineer",asks:[
+    ["Am I testing what's written, or what I assume was meant?","Self","Before writing every test scenario","The exact discipline that prevents the team's core failure from reappearing at test time"],
+    ["Has this exact defect happened before?","The regression suite / defect history","On every new defect report","A recurring defect is a process signal, not just a bug"],
+    ["Would I sign my name to 'this is safe to ship'?","Self","Before every go/no-go recommendation","Forces an explicit confidence statement instead of a default green checkmark"]]},
+  {role:"DevOps",asks:[
+    ["If this fails in the first hour, do I know the exact rollback command without looking it up?","Self","Before every release","Looking it up under pressure is where minutes become hours"],
+    ["Are there alerts for the specific new behaviour in this release, not just the old baseline?","Self + Tech Lead","Before every release","Generic monitoring catches generic problems; new behaviour needs new alerts"]]}
+ ],
+ meetings:{
+  headers:["Ceremony","Cadence","Duration","Attendees","Input","Output"],
+  rows:[
+   ["Conception Alignment Workshop","Once per project","60–90 min","PM, PO, Tech Lead, Stakeholder(s)","Draft charter","Signed charter"],
+   ["Backlog Refinement","Weekly","45–60 min","PO, Dev Team, QA","Draft stories","Ready stories or flagged for rework"],
+   ["Requirements Validation Review","Per scope, pre-design","30–60 min","QA, PO, Tech Lead","Draft BRD/SRS/backlog","Signed-off Ready backlog"],
+   ["Design Review","Per scope, pre-build","45–60 min","Tech Lead, Devs, QA, UI/UX","Draft architecture/design","Approved ADRs + design"],
+   ["Sprint Planning","Every sprint","1–2 hrs / 2-week sprint","Whole team","Ready backlog","Sprint Backlog + Sprint Goal"],
+   ["Daily Scrum","Daily","15 min, strict","Dev Team + SM","Yesterday's board","Updated board/burndown, named blockers"],
+   ["Pull Request Review","Continuous","Varies","Author + ≥1 reviewer","Open PR","Approved merge or requested changes"],
+   ["Sprint Review","End of sprint","45–60 min","Whole team + Stakeholders","Increment","Feedback, updated priorities"],
+   ["Release Readiness / Go-No-Go","Before every release","30 min","Tech Lead, QA, DevOps, PM","Test summary report","Go / No-Go decision"],
+   ["Sprint Retrospective","End of sprint","45–60 min","Whole team","Sprint experience","1–3 owned action items"]
+  ]
+ },
+ escalation:[
+  "Resolve directly between the two roles involved, using the relevant stage's checkpoint questions.",
+  "If unresolved within one working day, escalate to the Tech Lead (technical) or Product Owner (scope/priority).",
+  "If still unresolved, the Scrum Master convenes a short decision meeting with all named parties; the outcome is written into the Decision Log with an owner and a date.",
+  "Only budget, scope or timeline decisions exceeding the team's authority escalate to the Stakeholder(s) named in the Stage 1 stakeholder map."
+ ]
+};
+
+/* =====================================================================
+   DATA - TEMPLATES
+   ===================================================================== */
+const TEMPLATES = [
+{id:"T1",name:"Project Vision &amp; Charter",purpose:"Forces alignment on why the project exists before Stage 2 begins.",fields:["Problem statement (one paragraph)","Target users / beneficiaries","Goals (3–5, each measurable)","Success metrics (numeric, with method and deadline)","Assumptions (confidence level + owner)","Constraints (budget, timeline, regulatory, technical)","Top 5 risks (likelihood, impact, owner)","Stakeholders (name, role, decision authority, engagement)","Scope (in) / Non-goals (explicitly out)","Glossary seed"]},
+{id:"T2",name:"Glossary Entry",purpose:"Removes the cheapest, most common source of ambiguity: two people using the same word to mean two different things.",fields:["Term","Definition (one sentence, no circular reference)","Example of correct use","Owner (who to ask if it needs to change)"]},
+{id:"T3",name:"Risk Register Entry",purpose:"Makes risk visible and owned instead of implicit and shared by no one.",fields:["Risk ID","Description","Category (technical / scope / resource / external)","Likelihood (Low/Med/High)","Impact (Low/Med/High)","Owner","Mitigation plan","Status (Open/Mitigated/Closed)","Last reviewed date"]},
+{id:"T4",name:"User Story",purpose:"The atomic unit of the backlog - grounded directly in the course's Scrum story fields.",fields:["Name","Identifier","Role (\"As a…\")","Description (\"I want… so that…\")","Type","State","Size (estimate)","Priority","Acceptance criteria (≥1, Given/When/Then)","Linked NFRs","Linked edge cases"],example:"As a client, I want to register for a training session, so that I can gain a new skill. - Given a session with open seats, when I submit valid registration details, then I receive a confirmation and the seat count decrements by one."},
+{id:"T5",name:"Non-Functional Requirement (ISO/IEC 25010)",purpose:"Makes quality attributes explicit and testable instead of assumed.",fields:["Quality characteristic (functional suitability / performance efficiency / compatibility / usability / reliability / security / maintainability / portability)","Specific requirement","Numeric target","How it will be measured","How it will be tested"]},
+{id:"T6",name:"Requirements Review Checklist",purpose:"The literal instrument used at the Stage 3 gate.",fields:["Is every acceptance criterion independently testable?","Does this contradict any other approved requirement?","Is every domain term also defined in the Glossary?","Are edge cases (invalid/empty/boundary/exceptional) enumerated?","Has this been estimated by the people who will build it?","Are dependencies identified and sequenced or resolved?","Are relevant NFRs attached?","Has the PO explicitly approved this, by name and date?"]},
+{id:"T7",name:"Architecture Decision Record (ADR)",purpose:"Makes the reasoning behind a decision survivable beyond the memory of whoever made it.",fields:["ID and title","Status (Proposed/Accepted/Superseded)","Context - what problem forced this decision","Decision","Alternatives considered (and why rejected)","Consequences - what this makes easier, what it makes harder","Date and author"]},
+{id:"T8",name:"Definition of Ready",purpose:"The gate a story must pass before it can enter a sprint.",fields:["Acceptance criteria are independently testable","No contradiction with existing requirements","All terms defined in the Glossary","Estimated by the team that will build it","Dependencies identified and resolved or sequenced","Relevant NFRs attached","Explicitly approved by the Product Owner"]},
+{id:"T9",name:"Definition of Done",purpose:"The gate a task must pass before it can be called finished.",fields:["Code merged to main","Unit tests written and passing","Peer-reviewed and approved","CI green (lint, build, tests)","Documentation updated where behaviour changed","No known regression introduced","Acceptance criteria demonstrably met"]},
+{id:"T10",name:"Pull Request Description",purpose:"Forces every code change to trace back to an approved requirement.",fields:["Linked Story/Task ID","Acceptance criterion this PR satisfies (restated, not just linked)","Summary of the change","How it was tested","Screenshots (for UI changes)","Rollback risk (Low/Med/High) and why"]},
+{id:"T11",name:"Test Scenario / Test Case",purpose:"The reusable form of the worked Sign-Up example from Stage 8.",fields:["Scenario ID","Feature","Scenario description","Preconditions","Steps","Test data","Expected result","Actual result","Status (Pass/Fail)","Linked acceptance criterion"],example:"TS-SIGNUP-004 · Sign-Up · Sign-up attempt with an already-registered email address. Preconditions: an account already exists for that email. Expected: form rejects submission, inline error states the email is already registered, no duplicate account created. Linked to AC-3 on Story ST-014."},
+{id:"T12",name:"Defect Report",purpose:"Enough detail that a developer can reproduce the problem without asking a single follow-up question.",fields:["Defect ID","Title","Severity (Critical/High/Medium/Low)","Environment","Steps to reproduce","Expected result","Actual result","Attachments (screenshot/log)","Status (New/Triaged/Assigned/Resolved/Retested/Closed/Reopened)","Linked test case and requirement"]},
+{id:"T13",name:"Release Checklist",purpose:"The literal instrument used at the Stage 9 gate.",fields:["Smoke test passed on release candidate","All Critical/High defects closed or explicitly accepted","Regression suite green","Rollback plan tested in staging","Monitoring/alerts configured for new behaviour","Release notes published","Stakeholders notified","On-call owner named and reachable"]},
+{id:"T14",name:"Incident Postmortem",purpose:"Turns an incident into a process improvement instead of a war story.",fields:["Incident summary","Timeline (detection → mitigation → resolution)","Impact (users/systems affected, duration)","Root cause","What went well","What didn't go well","Action items (owner + due date)","Blameless - names roles and process gaps, not people"]},
+{id:"T15",name:"Retrospective (Mood Board format)",purpose:"Grounded directly in the course's Sprint Retrospective / Mood Board technique.",fields:["What went well (free-form impressions)","What was difficult","What we agree to change next sprint (max 3)","Owner + due date per action item","Follow-up on last retro's items - completed? if not, why?"]}
+];
+
+/* =====================================================================
+   DATA - REFERENCE (tools, risk, walkthrough, sources, principles)
+   ===================================================================== */
+const REFERENCE = {
+ principles:[
+  ["Communication clarity","Every gate exists to force a shared understanding into the open before work proceeds."],
+  ["Shared understanding","Enforced through independent-restatement tests at Stages 1, 3 and 4 - not assumed from silence in a meeting."],
+  ["Explicit responsibilities","One Accountable owner per activity, per the RACI matrix - never \"the team\"."],
+  ["Traceability","Every task traces to a Story; every Story to acceptance criteria; every test to an acceptance criterion."],
+  ["Requirement validation","A standalone gate (Stage 3), not a step folded silently into requirements writing."],
+  ["Minimal ambiguity","Glossary, acceptance criteria and edge-case logs remove room for two readings of the same text."],
+  ["Continuous verification","Static testing runs from Stage 1 onward - verification does not wait for code to exist."],
+  ["Agile development","Short feedback loops, working increments every sprint, a backlog that absorbs change without derailing commitments."],
+  ["Small team efficiency","Every element is proportionate to a 6–10 person team, not scaled down from an enterprise framework."],
+  ["High development quality","Definition of Ready and Definition of Done are gates, not aspirations."]
+ ],
+ tools:{
+  headers:["Need","Options","Recommended for a small team","Why"],
+  rows:[
+   ["Backlog &amp; sprint tracking","Jira, Linear, Trello, Notion","Linear (small, fast-moving) or Jira (deeper reporting)","Linear is faster day-to-day for small teams; Jira scales better as the team or integrations grow"],
+   ["Living documents","Confluence, Notion, Google Docs","Notion","Lower overhead than Confluence, still supports structured, linked documents"],
+   ["Diagramming","Lucidchart, draw.io, Mermaid, Miro","Mermaid for version-controlled diagrams; Miro/Excalidraw for workshops","Mermaid lives in the repo and stays in sync with code; Miro is better for live collaboration"],
+   ["UI/UX design","Figma, Sketch, Adobe XD","Figma","De facto small-team standard, strongest developer handoff"],
+   ["Version control &amp; review","GitHub, GitLab, Bitbucket","GitHub (GitLab if self-hosting matters)","Best-in-class PR review UX and ecosystem integrations"],
+   ["CI/CD","GitHub Actions, GitLab CI, Jenkins, CircleCI","GitHub Actions if already on GitHub","Zero extra infrastructure to maintain"],
+   ["Test case management","Xray, TestRail, a structured sheet","Sheet or Notion DB below ~5 testers; Xray/TestRail beyond","Dedicated tools pay off only once manual tracking becomes error-prone"],
+   ["Test automation","Selenium, Playwright, Cypress","Playwright","Fastest setup, best cross-browser support, actively maintained"],
+   ["Monitoring &amp; alerting","Grafana, Datadog, Sentry, New Relic","Sentry (errors) + Grafana (metrics)","Strong free tiers; avoids paying for enterprise observability too early"],
+   ["Team communication","Slack, Teams, Discord","Slack","Best integration ecosystem with the rest of this stack"],
+   ["Retrospective boards","Miro, FigJam, Retrium","FigJam if already using Figma","One less tool to context-switch into"]
+  ]
+ },
+ risk:{
+  steps:[
+   ["Identify","Any team member can log a risk at any time; it must land in the Risk Register within one working day, not stay verbal."],
+   ["Assess","Score Likelihood × Impact (Low/Med/High each). High×High risks are reviewed within 24 hours, not at the next scheduled meeting."],
+   ["Assign","Exactly one owner - the person accountable for tracking it, not necessarily the person who resolves it."],
+   ["Mitigate","Reduce likelihood, reduce impact, transfer, or explicitly accept. \"We'll keep an eye on it\" is not a mitigation plan."],
+   ["Monitor","Reviewed at every Sprint Retrospective as a standing agenda item, with status updated even when nothing changed."],
+   ["Close or escalate","Closed when the trigger can no longer occur. Open for 3+ sprints without progress escalates to Stakeholder level automatically."]
+  ],
+  matrix:"Likelihood × Impact produces a 3×3 grid. High/High risks are reviewed daily until mitigated, Medium-tier weekly at Retrospective, Low-tier monthly."
+ },
+ walkthrough:{
+  intro:"A worked example using the same Sign-Up feature the source testing material itself uses. Assume a small team building a course-registration platform.",
+  steps:[
+   ["1. Conception","Charter goal: \"Let a working professional register for a training session in under two minutes, without account confusion.\" Non-goal: payment processing (phase 2). Stakeholder signs off after the Same-Page Test."],
+   ["2. Requirements","Story ST-014: \"As a client, I want to sign up for a training session, so that I can gain a new skill.\" Acceptance criteria cover the valid path plus explicit edge cases: duplicate email, empty required field, malformed email, password mismatch."],
+   ["3. Validation","QA runs the Testability Check and confirms a test can be written from AC-3 (duplicate email) alone. The Two-Person Restatement Test passes."],
+   ["4. Architecture","ADR-007 records validating email uniqueness at the database layer (unique constraint) rather than only in application code, with the trade-off written down."],
+   ["5. Breakdown","ST-014 splits into: build the form (Frontend), build /signup (Backend), add the DB constraint (Backend), write the four edge-case tests (QA). Each has one named owner."],
+   ["6. Sprint Planning","Sprint Goal: \"Ship a working, edge-case-covered sign-up flow.\" All four tasks pass the Ownership Roll Call and fit capacity."],
+   ["7. Development","Backend and Frontend confirm the API error-response contract before either starts coding. Every PR links to ST-014 and restates the criterion it satisfies."],
+   ["8. Testing","QA writes TS-SIGNUP-004 for the duplicate-email case. Smoke passes; the defect found in execution is fixed, retested, and the regression suite re-run before closing."],
+   ["9. Deployment","Release checklist confirms the rollback was drilled in staging; a new alert watches signup-endpoint error rate specifically, not just general uptime."],
+   ["10. Retrospective","Mood Board surfaces that the API-contract conversation happened later than it should have. Action item: \"Confirm API contracts during Sprint Planning, not after\" - owned by the Tech Lead, starting next sprint."]
+  ]
+ },
+ sources:{
+  headers:["Concept","Source material","How it was merged","Industry practice added","Deviation &amp; justification"],
+  rows:[
+   ["Lifecycle model","V-model (Développement sécurisé S1/S2), with its own documented critique","Kept the core idea - a verification activity mapped to every development activity - but re-mapped onto Agile increments","Agile/Scrum cadence","Rejected as primary framework because the source's own critique (rigidity, late/expensive validation) applies directly to this team's problems"],
+   ["Cadence &amp; ceremonies","Scrum (Méthode Scrum S3): roles, events, artifacts, pros/cons","Adopted as the structural backbone of Stages 5–10","Kanban board inside the sprint; explicit Definition of Ready/Done","None - the strongest, most directly applicable match to the brief"],
+   ["Engineering practice","Scrum+XP complementarity, cited from Sutherland's \"Scrum and XP from the Trenches\"","Adopted XP practices (pairing, CI, collective ownership) into Stage 7","Trunk-based branching, Conventional Commits, PR traceability","None - the source explicitly names this combination as complementary"],
+   ["Team roles","Les rôles dans l'équipe de développement logiciel","Adopted the full role taxonomy as Part 1","Added Tech Lead and DevOps as explicit roles","The source implies technical and deployment ownership but names no owner; both added because the brief's core problem requires it"],
+   ["Testing theory","Concepts de base des tests logiciels: V&amp;V, static/dynamic, levels, types","Adopted near-verbatim into Stage 8","ISO/IEC 25010 full eight-characteristic model","Extended the course's five example non-functional types to the full standard"],
+   ["Black-box technique","Techniques de tests en boîte noire: five techniques with worked exercises","Adopted directly, examples adapted from the exam-grading exercise","None needed","None"],
+   ["White-box technique","Whitebox - Tests techniques: definition and purpose","Adopted the definition and purpose verbatim as grounding","Standard statement, branch, condition and path coverage criteria, plus cyclomatic complexity","Flagged explicitly as an industry-standard addition, since the specific worked coverage examples could not be verified from the extracted material"],
+   ["Test scenario writing","Rédaction des scénarios de tests: 4-step method, Sign-Up example","Adopted as the Stage 8 method, example reused directly","Reusable template (T11) generalized from the worked example","None"],
+   ["Deployment &amp; release","Not present in source material","N/A","Full Stage 9 built from industry release-engineering practice","Flagged as a pure industry-practice addition, per the brief's instruction to merge outside practice where the source is silent"]
+  ]
+ }
+};
+
+/* =====================================================================
+   DATA - DIAGRAMS (Mermaid source, copy-pasteable)
+   ===================================================================== */
+const DIAGRAMS = [
+{
+ id:"pipeline",
+ title:"Full pipeline - stages, gates and fail-loops",
+ blurb:"The whole operating system as a flowchart, including where a failed gate sends the work back to. Note that G3 sends failures back to Stage 2 (rewrite the requirement), and G8 sends them back to Stage 7 (fix and retest) - the loops matter more than the happy path.",
+ flow:[
+  {t:"Stage 1 - Conception",c:"y"},{t:"G1 Charter Sign-off",c:"g"},
+  {t:"Stage 2 - Requirements",c:"y"},{t:"G2 Backlog Testability",c:"g"},
+  {t:"Stage 3 - Validation",c:"y"},{t:"G3 Definition of Ready",c:"g"},
+  {t:"Stage 4 - Architecture",c:"y"},{t:"G4 Design Sign-off",c:"g"},
+  {t:"Stage 5 - Breakdown",c:"y"},{t:"G5 Ownership Roll Call",c:"g"},
+  {t:"Stage 6 - Sprint Planning",c:"y"},{t:"G6 Sprint Commitment",c:"g"},
+  {t:"Stage 7 - Development",c:"y"},{t:"G7 Definition of Done",c:"g"},
+  {t:"Stage 8 - Testing &amp; QA",c:"y"},{t:"G8 Release Readiness",c:"g"},
+  {t:"Stage 9 - Deployment",c:"y"},{t:"G9 Go / No-Go",c:"g"},
+  {t:"Stage 10 - Retrospective",c:"y"},{t:"G10 Retro Commitment",c:"g"}
+ ],
+ mermaid:`flowchart TD
+    classDef stage fill:#FFE08A,stroke:#161616,stroke-width:2px,color:#161616,font-weight:bold;
+    classDef gate fill:#BFEBCB,stroke:#161616,stroke-width:2px,color:#161616,font-weight:bold;
+
+    Start([New requirement or project]) --> S1
+    S1[Stage 1 - Project Conception]:::stage --> G1{G1 - Charter Sign-off}:::gate
+    G1 -- fail --> S1
+    G1 -- pass --> S2[Stage 2 - Requirements Engineering]:::stage
+    S2 --> G2{G2 - Backlog Testability}:::gate
+    G2 -- fail --> S2
+    G2 -- pass --> S3[Stage 3 - Requirements Validation]:::stage
+    S3 --> G3{G3 - Definition of Ready}:::gate
+    G3 -- rewrite --> S2
+    G3 -- pass --> S4[Stage 4 - Architecture and Technical Design]:::stage
+    S4 --> G4{G4 - Design Sign-off}:::gate
+    G4 -- fail --> S4
+    G4 -- pass --> S5[Stage 5 - Task Breakdown]:::stage
+    S5 --> G5{G5 - Ownership Roll Call}:::gate
+    G5 -- fail --> S5
+    G5 -- pass --> S6[Stage 6 - Sprint Planning]:::stage
+    S6 --> G6{G6 - Sprint Commitment}:::gate
+    G6 -- descope --> S6
+    G6 -- pass --> S7[Stage 7 - Development]:::stage
+    S7 --> G7{G7 - Definition of Done}:::gate
+    G7 -- fail --> S7
+    G7 -- pass --> S8[Stage 8 - Testing and QA]:::stage
+    S8 --> G8{G8 - Release Readiness}:::gate
+    G8 -- retest --> S7
+    G8 -- pass --> S9[Stage 9 - Deployment and Release]:::stage
+    S9 --> G9{G9 - Go or No-Go}:::gate
+    G9 -- rollback --> S9
+    G9 -- pass --> S10[Stage 10 - Retrospective]:::stage
+    S10 --> G10{G10 - Retro Commitment}:::gate
+    G10 -- next --> S6`
+},
+{
+ id:"defect",
+ title:"Defect lifecycle",
+ blurb:"Grounded in the course's retesting (confirmation testing) and regression testing concepts. The key detail: retesting repeats the exact original reproduction steps, and regression testing runs alongside every fix to confirm nothing else broke.",
+ flow:[
+  {t:"New",c:"r"},{t:"Triaged",c:""},{t:"Assigned",c:""},{t:"Resolved",c:"p"},{t:"Retested",c:"p"},{t:"Closed",c:"g"}
+ ],
+ mermaid:`stateDiagram-v2
+    [*] --> New : QA finds a defect
+    New --> Triaged : Severity and priority assigned
+    Triaged --> Assigned : Routed to a developer
+    Assigned --> Resolved : Developer fixes and marks Resolved
+    Resolved --> Retested : QA repeats the original reproduction steps
+    Retested --> Closed : Defect confirmed gone, regression suite green
+    Retested --> Reopened : Defect still reproduces
+    Reopened --> Assigned : Back to the developer
+    Closed --> [*]
+
+    note right of Retested
+        Regression testing runs alongside
+        every retest, confirming the fix
+        did not break anything else.
+    end note`
+},
+{
+ id:"git",
+ title:"Branching, PR and CI flow (Stage 7)",
+ blurb:"Trunk-based development with short-lived feature branches. Chosen over GitFlow for a small team because merge-conflict drift on long-lived branches costs more than GitFlow's release-train ceremony buys.",
+ flow:[
+  {t:"main (always releasable)",c:"y"},{t:"Feature branch ≤2 days",c:""},{t:"Implement + unit tests",c:""},{t:"Pull Request",c:"p"},{t:"CI: lint, build, test",c:"g"},{t:"Peer review ≥1",c:"g"},{t:"Merge to main",c:"y"}
+ ],
+ mermaid:`flowchart LR
+    classDef branch fill:#FFE08A,stroke:#161616,stroke-width:2px,color:#161616,font-weight:bold;
+    classDef gate fill:#BFEBCB,stroke:#161616,stroke-width:2px,color:#161616,font-weight:bold;
+
+    Main[(main branch - always releasable)]:::branch --> Branch[Create short-lived feature branch, under 2 days]:::branch
+    Branch --> Code[Implement plus write unit tests]:::branch
+    Code --> PR[Open Pull Request, linked to Story and Acceptance Criterion]:::branch
+    PR --> CI{CI lint build tests}:::gate
+    CI -- red --> Code
+    CI -- green --> Review{Peer review at least 1 approval}:::gate
+    Review -- changes --> Code
+    Review -- approved --> Merge[Merge to main]:::branch
+    Merge --> Main`
+}
+];
+
+/* =====================================================================
+   RENDER
+   ===================================================================== */
+const TABS=[
+ {id:"roadmap",label:"Roadmap"},
+ {id:"methodology",label:"Methodology"},
+ {id:"roles",label:"Roles & RACI"},
+ {id:"comms",label:"Communication"},
+ {id:"templates",label:"Templates"},
+ {id:"reference",label:"Reference"},
+ {id:"diagrams",label:"Diagrams"}
+];
+
+const $=(s)=>document.querySelector(s);
+const esc=(s)=>String(s);
+
+function renderTabs(){
+  $("#tabs").innerHTML=TABS.map((t,i)=>
+    `<button class="tab${i===0?' active':''}" data-tab="${t.id}">${t.label}</button>`).join("");
+  document.querySelectorAll(".tab").forEach(b=>{
+    b.addEventListener("click",()=>switchTab(b.dataset.tab));
+  });
+}
+function switchTab(id){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.tab===id));
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+id));
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(id==="diagrams") paintMermaidDiagrams();
+}
+
+/* ---------- ROADMAP TREE ---------- */
+function renderRoadmap(){
+  let h=`
+  <div class="page-head">
+    <span class="kicker">Standard Operating Procedure · v1.0</span>
+    <h1>The delivery roadmap</h1>
+    <p>Ten stages, each ending in a gate nobody passes without meeting its criteria. Click any node - stage, sub-topic or gate - to open its full detail.</p>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><span class="swatch" style="background:var(--yellow)"></span> Stage - a phase of work</div>
+    <div class="legend-item"><span class="swatch" style="background:var(--purple)"></span> Sub-topic - what the stage covers</div>
+    <div class="legend-item"><span class="swatch" style="background:var(--green)"></span> Gate - must pass to proceed</div>
+    <div class="legend-item"><span class="swatch" style="background:var(--blue)"></span> Milestone</div>
+  </div>
+  <div class="tree">`;
+
+  h+=`<div class="milestone-row"><div class="cell-spine">
+      <button class="node node-milestone" data-kind="info" data-key="start">Project kickoff - a named business need</button>
+     </div></div>`;
+
+  STAGES.forEach((s,i)=>{
+    const side = i%2===0 ? "right" : "left";
+    const subs = s.subs.map((sub,j)=>
+      `<button class="node node-sub" data-kind="sub" data-stage="${s.id}" data-idx="${j}">${sub.name}</button>`).join("");
+    const sideCell=`<div class="cell-side ${side}"><div class="branch">${subs}</div></div>`;
+    const emptyCell=`<div class="cell-side"></div>`;
+    h+=`<div class="row">
+      ${side==="left"?sideCell:emptyCell}
+      <div class="cell-spine">
+        <button class="node node-stage" data-kind="stage" data-key="${s.id}">
+          <span class="num">${s.n}</span>${s.name}
+        </button>
+      </div>
+      ${side==="right"?sideCell:emptyCell}
+    </div>`;
+
+    const g=GATES[i];
+    h+=`<div class="gate-row"><div class="cell-spine">
+        <button class="node node-gate" data-kind="gate" data-key="${g.n}">
+          <span class="num">G${g.n}</span>${g.name}
+        </button>
+       </div></div>`;
+  });
+
+  h+=`<div class="milestone-row"><div class="cell-spine">
+      <button class="node node-milestone" data-kind="info" data-key="loop">Next sprint - loop back to Stage 6</button>
+     </div></div>`;
+  h+=`</div>`;
+  $("#view-roadmap").innerHTML=h;
+}
+
+/* ---------- METHODOLOGY ---------- */
+function renderMethodology(){
+  const m=METHODOLOGY;
+  let h=`<div class="page-head">
+    <span class="kicker">Part 0 - Foundations</span>
+    <h1>Methodology evaluation</h1>
+    <p>The brief was explicit that Scrum should not be assumed as the default. Each candidate was evaluated on how well it addresses this team's stated failure mode - communication - not on general popularity.</p>
+  </div>`;
+
+  h+=`<div class="card"><h3>Decision - ${m.decision}</h3>
+    <p class="sub">${m.oneLiner}</p>
+    <div>${m.layers.map(l=>`<span class="pill ${l.cls}"><b>${l.name}</b> · ${l.role}</span>`).join("")}</div>
+  </div>`;
+
+  h+=`<h3 style="margin:26px 0 12px;font-size:16px">Candidate comparison</h3>`;
+  h+=table(m.comparison.headers,m.comparison.rows);
+
+  h+=`<h3 style="margin:26px 0 12px;font-size:16px">Why not each alternative</h3><div class="grid2">`;
+  m.whyNot.forEach(w=>{h+=`<div class="card" style="margin-bottom:0"><h4 style="margin-top:0">${w.q}</h4><p style="font-size:13.8px;color:var(--ink-soft)">${w.a}</p></div>`;});
+  h+=`</div>`;
+
+  h+=`<h3 style="margin:30px 0 12px;font-size:16px">How this hybrid fixes each named symptom</h3>`;
+  h+=table(m.symptomMap.headers,m.symptomMap.rows);
+
+  h+=`<div class="grid2" style="margin-top:22px">
+    <div class="card" style="margin-bottom:0"><h4 style="margin-top:0">Scrum advantages preserved</h4>
+      <ul class="tick">${m.scrumPros.map(p=>`<li>${p}</li>`).join("")}</ul></div>
+    <div class="card" style="margin-bottom:0"><h4 style="margin-top:0">Scrum disadvantages mitigated</h4>
+      ${m.scrumCons.map(c=>`<div style="margin-bottom:14px"><p style="font-size:13.4px"><b>Risk:</b> ${c.con}</p><p style="font-size:13.4px;color:var(--muted)"><b>Fix:</b> ${c.fix}</p></div>`).join("")}</div>
+  </div>`;
+  $("#view-methodology").innerHTML=h;
+}
+
+/* ---------- ROLES + RACI ---------- */
+function renderRoles(){
+  let h=`<div class="page-head">
+    <span class="kicker">Part 1 - Ownership</span>
+    <h1>Roles &amp; responsibility matrix</h1>
+    <p>"Who is accountable" must have exactly one answer, every time it's asked. Click a role for its full mandate, inputs, outputs and source grounding.</p>
+  </div>`;
+  h+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:34px">`;
+  ROLES.forEach(r=>{
+    h+=`<button class="node node-stage" style="flex-direction:column;align-items:flex-start;gap:3px" data-kind="role" data-key="${r.id}">
+      <span style="font-size:14.5px;font-weight:700">${r.title}</span>
+      <span style="font-size:11.5px;font-weight:500;opacity:.72">${r.aka}</span>
+    </button>`;
+  });
+  h+=`</div>`;
+
+  h+=`<h3 style="margin:0 0 8px;font-size:16px">RACI matrix - every phase</h3>
+   <p style="font-size:13.4px;color:var(--muted);margin-bottom:14px">
+   <b>R</b> Responsible (does the work) · <b>A</b> Accountable (owns the outcome, signs off - exactly one per row) · <b>C</b> Consulted · <b>I</b> Informed.
+   Accountable cells are highlighted yellow, Responsible green.</p>`;
+
+  let rows=RACI.rows.map(r=>{
+    return r.map((c,i)=>{
+      if(i<2) return c;
+      const cls = c.includes("A") ? "c raci-A" : (c.includes("R") ? "c raci-R" : "c");
+      return {v:c,cls:cls};
+    });
+  });
+  h+=table(RACI.headers,rows);
+  h+=`<p style="font-size:12.8px;color:var(--muted);margin-top:-8px">Where a stage describes Stakeholder sign-off, PM/SM is Accountable for <i>obtaining</i> it - ultimate commercial authority remains with the Stakeholder(s) named in the Stage 1 map.</p>`;
+  $("#view-roles").innerHTML=h;
+}
+
+/* ---------- COMMUNICATION ---------- */
+function renderComms(){
+  const c=COMMS;
+  let h=`<div class="page-head">
+    <span class="kicker">Part 3 - Communication framework</span>
+    <h1>What to ask, who to ask, when</h1>
+    <p>The cross-cutting layer every stage draws its checkpoint questions from. Print it, pin it, onboard from it.</p>
+  </div>`;
+
+  h+=`<div class="card"><h3>Universal checkpoint questions</h3>
+    <p class="sub">Ask these at any checkpoint, in any stage, regardless of role.</p>
+    <ul class="tick">${c.universal.map(q=>`<li>${q}</li>`).join("")}</ul></div>`;
+
+  h+=`<h3 style="margin:28px 0 14px;font-size:16px">Role-specific templates</h3>`;
+  c.roleTemplates.forEach(rt=>{
+    h+=`<div class="card"><h4 style="margin-top:0">${rt.role}</h4>`;
+    h+=table(["What to ask","Who to ask","When","Why"],rt.asks);
+    h+=`</div>`;
+  });
+
+  h+=`<h3 style="margin:28px 0 14px;font-size:16px">Meeting structure</h3>`;
+  h+=table(c.meetings.headers,c.meetings.rows);
+
+  h+=`<div class="card"><h3>Escalation path</h3>
+    <ol style="margin:10px 0 0;padding-left:20px;font-size:14px;color:var(--ink-soft)">
+    ${c.escalation.map(s=>`<li style="margin-bottom:8px">${s}</li>`).join("")}</ol></div>`;
+  $("#view-comms").innerHTML=h;
+}
+
+/* ---------- TEMPLATES ---------- */
+function renderTemplates(){
+  let h=`<div class="page-head">
+    <span class="kicker">Part 5 - Appendix</span>
+    <h1>Templates &amp; checklists</h1>
+    <p>Every template referenced by name in a stage, defined in full and ready to copy into your tool of choice.</p>
+  </div>`;
+  h+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px">`;
+  TEMPLATES.forEach(t=>{
+    h+=`<div class="card" style="margin-bottom:0">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
+        <span class="pill y" style="margin:0">${t.id}</span>
+        <h4 style="margin:0;font-size:15px">${t.name}</h4>
+      </div>
+      <p class="sub" style="margin-bottom:11px">${t.purpose}</p>
+      <ul class="tick">${t.fields.map(f=>`<li>${f}</li>`).join("")}</ul>
+      ${t.example?`<div class="callout" style="margin-top:12px"><b>Example:</b> ${t.example}</div>`:""}
+    </div>`;
+  });
+  h+=`</div>`;
+  $("#view-templates").innerHTML=h;
+}
+
+/* ---------- REFERENCE ---------- */
+function renderReference(){
+  const r=REFERENCE;
+  let h=`<div class="page-head">
+    <span class="kicker">Parts 6–8 &amp; appendices</span>
+    <h1>Reference</h1>
+    <p>Core principles, tool recommendations, the risk workflow, a worked example, and exactly which ideas came from the course material versus industry practice.</p>
+  </div>`;
+
+  h+=`<div class="card"><h3>Core principles</h3><ul class="tick">
+    ${r.principles.map(p=>`<li><b>${p[0]}</b> - ${p[1]}</li>`).join("")}</ul></div>`;
+
+  h+=`<h3 style="margin:28px 0 12px;font-size:16px">Risk management workflow</h3><div class="card">
+    <ol style="margin:0;padding-left:20px;font-size:14px;color:var(--ink-soft)">
+    ${r.risk.steps.map(s=>`<li style="margin-bottom:9px"><b>${s[0]}</b> - ${s[1]}</li>`).join("")}</ol>
+    <div class="callout" style="margin-top:14px">${r.risk.matrix}</div></div>`;
+
+  h+=`<h3 style="margin:28px 0 12px;font-size:16px">Tool recommendations</h3>`;
+  h+=table(r.tools.headers,r.tools.rows);
+
+  h+=`<h3 style="margin:28px 0 12px;font-size:16px">Worked example - end to end</h3>
+    <div class="card"><p class="sub">${r.walkthrough.intro}</p>
+    <ul class="tick">${r.walkthrough.steps.map(s=>`<li><b>${s[0]}</b> - ${s[1]}</li>`).join("")}</ul></div>`;
+
+  h+=`<h3 style="margin:28px 0 12px;font-size:16px">Source integration notes</h3>
+   <p style="font-size:13.4px;color:var(--muted);margin-bottom:14px">Course material was compared and merged with industry practice, not summarized. Deviations are justified explicitly.</p>`;
+  h+=table(r.sources.headers,r.sources.rows);
+  $("#view-reference").innerHTML=h;
+}
+
+/* ---------- DIAGRAMS ---------- */
+let mermaidReady=false;
+let mermaidPainted=false;
+
+function renderDiagrams(){
+  let h=`<div class="page-head">
+    <span class="kicker">Diagrams</span>
+    <h1>Flowcharts</h1>
+    <p>Explore each diagram by dragging to pan, scrolling in either direction, or pinching to zoom.</p>
+  </div>`;
+  DIAGRAMS.forEach(d=>{
+    h+=`<div class="card">
+      <h3>${d.title}</h3>
+      <p class="sub">${d.blurb}</p>
+      <div class="diagram-shell" data-viewer="${d.id}">
+        <div class="diagram-toolbar" role="toolbar" aria-label="${d.title} controls">
+          <button type="button" data-action="zoom-out" aria-label="Zoom out">−</button>
+          <output data-role="zoom" aria-live="polite">100%</output>
+          <button type="button" data-action="zoom-in" aria-label="Zoom in">+</button>
+          <button type="button" data-action="actual" aria-label="Reset to 100 percent">100%</button>
+          <button type="button" data-action="fit">Fit</button>
+        </div>
+        <div class="mermaid-wrap" tabindex="0" aria-label="${d.title}; drag to pan and pinch to zoom">
+          <div class="diagram-canvas"><div class="mermaid" id="mmd-${d.id}"></div></div>
+        </div>
+      </div>
+    </div>`;
+  });
+  $("#view-diagrams").innerHTML=h;
+}
+
+const VIEWER_MIN_SCALE=.25;
+const VIEWER_MAX_SCALE=3;
+const VIEWER_FIT_MIN_SCALE=.08;
+const VIEWER_SCALE_STEP=.15;
+const VIEWER_PADDING=48;
+
+function clampScale(value,min=VIEWER_MIN_SCALE){
+  return Math.min(VIEWER_MAX_SCALE,Math.max(min,value));
+}
+
+function normalizeSvgViewBox(svg){
+  const bounds=svg.getBBox();
+  const padding=32;
+  const x=bounds.x-padding;
+  const y=bounds.y-padding;
+  const width=bounds.width+padding*2;
+  const height=bounds.height+padding*2;
+  svg.setAttribute("viewBox",`${x} ${y} ${width} ${height}`);
+  svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+  return {width,height};
+}
+
+function setDiagramScale(viewer,nextScale,anchor,allowFitScale=false){
+  const {viewport,canvas,host,svg,zoomOutput,baseWidth,baseHeight}=viewer;
+  const previous=viewer.scale;
+  const minimum=allowFitScale ? VIEWER_FIT_MIN_SCALE : VIEWER_MIN_SCALE;
+  const scale=clampScale(nextScale,minimum);
+  const x=anchor?.x ?? viewport.clientWidth/2;
+  const y=anchor?.y ?? viewport.clientHeight/2;
+  const contentX=(viewport.scrollLeft+x)/previous;
+  const contentY=(viewport.scrollTop+y)/previous;
+
+  viewer.scale=scale;
+  const scaledWidth=baseWidth*scale;
+  const scaledHeight=baseHeight*scale;
+  const canvasWidth=Math.max(viewport.clientWidth,scaledWidth+VIEWER_PADDING);
+  const canvasHeight=Math.max(viewport.clientHeight,scaledHeight+VIEWER_PADDING);
+  canvas.style.width=canvasWidth+"px";
+  canvas.style.height=canvasHeight+"px";
+  host.style.width=scaledWidth+"px";
+  host.style.height=scaledHeight+"px";
+  host.style.left=Math.max(24,(canvasWidth-scaledWidth)/2)+"px";
+  host.style.top=Math.max(24,(canvasHeight-scaledHeight)/2)+"px";
+  svg.style.width=scaledWidth+"px";
+  svg.style.height=scaledHeight+"px";
+  viewport.scrollLeft=Math.max(0,contentX*scale-x);
+  viewport.scrollTop=Math.max(0,contentY*scale-y);
+  const label=Math.round(scale*100)+"%";
+  zoomOutput.value=label;
+  zoomOutput.textContent=label;
+}
+
+function centerDiagram(viewer){
+  viewer.viewport.scrollLeft=Math.max(
+    0,
+    (viewer.canvas.scrollWidth-viewer.viewport.clientWidth)/2
+  );
+  viewer.viewport.scrollTop=Math.max(
+    0,
+    (viewer.canvas.scrollHeight-viewer.viewport.clientHeight)/2
+  );
+}
+
+function fitDiagram(viewer){
+  const availableWidth=Math.max(1,viewer.viewport.clientWidth-VIEWER_PADDING);
+  const availableHeight=Math.max(1,viewer.viewport.clientHeight-VIEWER_PADDING);
+  const fitScale=Math.min(
+    availableWidth/viewer.baseWidth,
+    availableHeight/viewer.baseHeight,
+    1
+  );
+  setDiagramScale(viewer,fitScale,undefined,true);
+  centerDiagram(viewer);
+}
+
+function initializeDiagramViewer(shell,svg){
+  const viewport=shell.querySelector(".mermaid-wrap");
+  const canvas=shell.querySelector(".diagram-canvas");
+  const host=shell.querySelector("[id^='mmd-']");
+  const zoomOutput=shell.querySelector("[data-role='zoom']");
+  const normalizedBounds=normalizeSvgViewBox(svg);
+  const viewer={
+    shell,viewport,canvas,host,svg,zoomOutput,
+    baseWidth:normalizedBounds.width,
+    baseHeight:normalizedBounds.height,
+    scale:1
+  };
+  let drag=null;
+
+  svg.setAttribute("width",String(viewer.baseWidth));
+  svg.setAttribute("height",String(viewer.baseHeight));
+  svg.style.width=viewer.baseWidth+"px";
+  svg.style.height=viewer.baseHeight+"px";
+  svg.style.maxWidth="none";
+
+  shell.querySelector("[data-action='zoom-in']").addEventListener("click",()=>{
+    setDiagramScale(viewer,viewer.scale+VIEWER_SCALE_STEP);
+  });
+  shell.querySelector("[data-action='zoom-out']").addEventListener("click",()=>{
+    setDiagramScale(viewer,viewer.scale-VIEWER_SCALE_STEP);
+  });
+  shell.querySelector("[data-action='actual']").addEventListener("click",()=>{
+    setDiagramScale(viewer,1);
+    centerDiagram(viewer);
+  });
+  shell.querySelector("[data-action='fit']").addEventListener("click",()=>{
+    fitDiagram(viewer);
+  });
+
+  viewport.addEventListener("wheel",event=>{
+    if(!event.ctrlKey) return;
+    event.preventDefault();
+    const rect=viewport.getBoundingClientRect();
+    const pinchScale=Math.exp(-event.deltaY*.01);
+    setDiagramScale(viewer,viewer.scale*pinchScale,{
+      x:event.clientX-rect.left,
+      y:event.clientY-rect.top
+    });
+  },{passive:false});
+
+  viewport.addEventListener("pointerdown",event=>{
+    if(event.button!==0) return;
+    drag={
+      x:event.clientX,
+      y:event.clientY,
+      left:viewport.scrollLeft,
+      top:viewport.scrollTop
+    };
+    viewport.setPointerCapture(event.pointerId);
+    viewport.classList.add("dragging");
+  });
+  viewport.addEventListener("pointermove",event=>{
+    if(!drag) return;
+    viewport.scrollLeft=drag.left-(event.clientX-drag.x);
+    viewport.scrollTop=drag.top-(event.clientY-drag.y);
+  });
+  const stopDrag=()=>{
+    drag=null;
+    viewport.classList.remove("dragging");
+  };
+  viewport.addEventListener("pointerup",stopDrag);
+  viewport.addEventListener("pointercancel",stopDrag);
+  viewport.addEventListener("lostpointercapture",stopDrag);
+
+  setDiagramScale(viewer,1);
+  requestAnimationFrame(()=>fitDiagram(viewer));
+  return viewer;
+}
+
+async function paintMermaidDiagrams(){
+  if(mermaidPainted || typeof mermaid==="undefined") return;
+  if(!mermaidReady){
+    mermaid.initialize({
+      startOnLoad:false,
+      theme:"base",
+      securityLevel:"loose",
+      flowchart:{curve:"basis",htmlLabels:true,useMaxWidth:false,nodeSpacing:40,rankSpacing:50},
+      themeVariables:{
+        fontFamily:"Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif",
+        primaryColor:"#FFE08A",
+        primaryTextColor:"#161616",
+        primaryBorderColor:"#161616",
+        lineColor:"#161616",
+        secondaryColor:"#BFEBCB",
+        tertiaryColor:"#CFE4FB",
+        mainBkg:"#FFE08A",
+        nodeBorder:"#161616",
+        clusterBkg:"#FFFFFF",
+        titleColor:"#161616",
+        edgeLabelBackground:"#F4F4F2"
+      }
+    });
+    mermaidReady=true;
+  }
+  if(document.fonts?.ready) await document.fonts.ready;
+  for(const d of DIAGRAMS){
+    const host=document.getElementById("mmd-"+d.id);
+    if(!host) continue;
+    try{
+      const {svg}=await mermaid.render("svg-"+d.id+"-"+Date.now(), d.mermaid);
+      host.innerHTML=svg;
+      const el=host.querySelector("svg");
+      if(el){
+        await new Promise(resolve=>
+          requestAnimationFrame(()=>requestAnimationFrame(resolve))
+        );
+        initializeDiagramViewer(host.closest(".diagram-shell"),el);
+      }
+    }catch(err){
+      host.className="diagram-error";
+      host.textContent="Could not render diagram: "+(err?.message||err);
+    }
+  }
+  mermaidPainted=true;
+}
+
+/* ---------- table helper (cells may be strings or {v,cls}) ---------- */
+function table(headers,rows){
+  let h=`<div class="tbl-wrap"><table><thead><tr>`;
+  h+=headers.map(x=>`<th>${x}</th>`).join("");
+  h+=`</tr></thead><tbody>`;
+  rows.forEach(r=>{
+    h+=`<tr>`+r.map(c=>{
+      if(c && typeof c==="object") return `<td class="${c.cls}">${c.v}</td>`;
+      return `<td>${c}</td>`;
+    }).join("")+`</tr>`;
+  });
+  h+=`</tbody></table></div>`;
+  return h;
+}
+
+/* =====================================================================
+   DRAWER
+   ===================================================================== */
+const drawer=$("#drawer"),overlay=$("#overlay");
+let lastFocus=null;
+
+function openDrawer(badge,badgeBg,title,tag,bodyHtml){
+  $("#drawer-badge").textContent=badge;
+  $("#drawer-badge").style.background=badgeBg;
+  $("#drawer-title").innerHTML=title;
+  $("#drawer-tag").innerHTML=tag||"";
+  $("#drawer-body").innerHTML=bodyHtml;
+  $("#drawer-body").scrollTop=0;
+  drawer.classList.add("show");overlay.classList.add("show");
+  $("#close-btn").focus();
+}
+function closeDrawer(){
+  drawer.classList.remove("show");overlay.classList.remove("show");
+  if(lastFocus) lastFocus.focus();
+}
+overlay.addEventListener("click",closeDrawer);
+$("#close-btn").addEventListener("click",closeDrawer);
+document.addEventListener("keydown",e=>{if(e.key==="Escape") closeDrawer();});
+
+function blk(label,cls,inner){
+  return `<div class="blk"><div class="blk-label ${cls||''}">${label}</div>${inner}</div>`;
+}
+function ul(items,cls){
+  return `<ul class="tick ${cls||''}">${items.map(i=>`<li>${i}</li>`).join("")}</ul>`;
+}
+
+function openStage(id){
+  const s=STAGES.find(x=>x.id===id);if(!s)return;
+  let b="";
+  b+=blk("Objective","",`<p>${s.objective}</p>`);
+  b+=blk("Entry criteria","b",`<p>${s.entry}</p>`);
+  b+=blk("Required artifacts","p",ul(s.artifacts));
+  b+=blk("Tools","p",ul(s.tools));
+  b+=blk("Deliverables","",ul(s.deliverables));
+  b+=blk("Exit criteria - validation gate","g",ul(s.exit,"check"));
+  b+=blk("Review process","",`<p>${s.review}</p>`);
+  b+=blk("Validation process","g",`<div class="callout">${s.validation}</div>`);
+  b+=blk("Communication checkpoint questions","b",ul(s.comms));
+  b+=blk("Failure modes this prevents","",ul(s.fails));
+  b+=blk("Source grounding","",`<div class="callout" style="background:#F4F1FB">${s.grounding}</div>`);
+  b+=`<div class="meta-line"><b>Responsible:</b> ${s.responsible}</div>`;
+  openDrawer("Stage "+s.n,"var(--yellow)",s.name,s.tag,b);
+}
+function openSub(stageId,idx){
+  const s=STAGES.find(x=>x.id===stageId);if(!s)return;
+  const sub=s.subs[idx];if(!sub)return;
+  let b=blk("What it is","p",`<p>${sub.d}</p>`);
+  b+=`<div class="meta-line">Part of <b>Stage ${s.n} - ${s.name}</b>.</div>`;
+  b+=`<div style="margin-top:16px"><button class="copy-btn" id="goto-stage">Open Stage ${s.n} in full →</button></div>`;
+  openDrawer("Sub-topic","var(--purple)",sub.name,"Stage "+s.n+" · "+s.name,b);
+  const g=document.getElementById("goto-stage");
+  if(g) g.addEventListener("click",()=>openStage(stageId));
+}
+function openGate(n){
+  const g=GATES.find(x=>x.n===Number(n));if(!g)return;
+  const s=STAGES[Number(n)-1];
+  let b=blk("Sits between","b",`<p>${g.between}</p>`);
+  b+=blk("Passes when","g",`<div class="callout">${g.passes}</div>`);
+  b+=blk("Approved by","",`<p>${g.approver}</p>`);
+  if(s) b+=blk("Full exit checklist","g",ul(s.exit,"check"));
+  b+=`<div class="meta-line">No one proceeds past a gate until it is passed. A gate that gets waived under time pressure is not a gate.</div>`;
+  openDrawer("Gate G"+g.n,"var(--green)",g.name,g.between,b);
+}
+function openRole(id){
+  const r=ROLES.find(x=>x.id===id);if(!r)return;
+  let b=blk("Mandate","",`<p>${r.mandate}</p>`);
+  b+=blk("Receives","b",ul(r.receives));
+  b+=blk("Produces","p",ul(r.produces));
+  b+=blk("Talks to","",`<p>${r.talks}</p>`);
+  b+=blk("Source grounding","",`<div class="callout" style="background:#F4F1FB">${r.grounding}</div>`);
+  openDrawer("Role","var(--yellow)",r.title,r.aka,b);
+}
+const INFO={
+ start:{t:"Project kickoff",tag:"Entry point into the system",b:`<div class="blk"><p>The system starts when a business need is named by a stakeholder with the authority to fund or prioritize it - not when someone has an idea, and not when code starts.</p></div><div class="blk"><div class="blk-label b">Why this matters</div><p>An unnamed sponsor is the most common root cause of a project that cannot resolve its own scope disputes later. If nobody can approve, nobody can decide.</p></div>`},
+ loop:{t:"The loop",tag:"Where the cycle restarts",b:`<div class="blk"><p>After Gate G10, the cycle returns to Stage 6 - Sprint Planning - for the next sprint. Stages 1 to 5 are re-entered only when new scope arrives, not every sprint.</p></div><div class="blk"><div class="blk-label g">The rule that keeps this honest</div><p>At least one retrospective action item must be scheduled into the very next sprint as real, estimated work. A retrospective that produces only discussion has not passed its gate.</p></div>`}
+};
+function openInfo(k){
+  const i=INFO[k];if(!i)return;
+  openDrawer("Milestone","var(--blue)",i.t,i.tag,i.b);
+}
+
+document.addEventListener("click",e=>{
+  const n=e.target.closest("[data-kind]");
+  if(!n)return;
+  lastFocus=n;
+  const k=n.dataset.kind;
+  if(k==="stage") openStage(n.dataset.key);
+  else if(k==="sub") openSub(n.dataset.stage,n.dataset.idx);
+  else if(k==="gate") openGate(n.dataset.key);
+  else if(k==="role") openRole(n.dataset.key);
+  else if(k==="info") openInfo(n.dataset.key);
+});
+
+/* =====================================================================
+   INIT
+   ===================================================================== */
+renderTabs();
+renderRoadmap();
+renderMethodology();
+renderRoles();
+renderComms();
+renderTemplates();
+renderReference();
+renderDiagrams();
+</script>
+</body>
+</html>

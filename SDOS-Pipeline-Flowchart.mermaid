@@ -1,0 +1,34 @@
+flowchart TD
+    classDef stage fill:#EAF2FB,stroke:#1F2A44,stroke-width:1.4px,color:#1F2A44,font-weight:600;
+    classDef gate fill:#FDF1DE,stroke:#C9820F,stroke-width:1.4px,color:#6B4508,font-weight:600;
+
+    Start([New requirement or project]) --> S1
+    S1[Stage 1 — Project Conception]:::stage --> G1{G1 · Charter Sign-off}:::gate
+    G1 -- fail --> S1
+    G1 -- pass --> S2[Stage 2 — Requirements Engineering]:::stage
+    S2 --> G2{G2 · Backlog Testability}:::gate
+    G2 -- fail --> S2
+    G2 -- pass --> S3[Stage 3 — Requirements Validation]:::stage
+    S3 --> G3{G3 · Definition of Ready}:::gate
+    G3 -- fail: rewrite --> S2
+    G3 -- pass --> S4[Stage 4 — Architecture & Technical Design]:::stage
+    S4 --> G4{G4 · Design Sign-off}:::gate
+    G4 -- fail --> S4
+    G4 -- pass --> S5[Stage 5 — Task Breakdown]:::stage
+    S5 --> G5{G5 · Ownership Roll Call}:::gate
+    G5 -- fail --> S5
+    G5 -- pass --> S6[Stage 6 — Sprint Planning]:::stage
+    S6 --> G6{G6 · Sprint Commitment}:::gate
+    G6 -- fail: descope --> S6
+    G6 -- pass --> S7[Stage 7 — Development]:::stage
+    S7 --> G7{G7 · Definition of Done}:::gate
+    G7 -- fail --> S7
+    G7 -- pass --> S8[Stage 8 — Testing and QA]:::stage
+    S8 --> G8{G8 · Release Readiness}:::gate
+    G8 -- fail: fix and retest --> S7
+    G8 -- pass --> S9[Stage 9 — Deployment & Release]:::stage
+    S9 --> G9{G9 · Go / No-Go}:::gate
+    G9 -- fail: rollback --> S9
+    G9 -- pass --> S10[Stage 10 — Retrospective]:::stage
+    S10 --> G10{G10 · Retro Commitment}:::gate
+    G10 -- next sprint --> S6
