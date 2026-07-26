@@ -30,30 +30,11 @@ Zoomable Mermaid diagrams for the full pipeline, defect lifecycle, and Git/CI fl
 ## Quick start
 
 ```bash
-# Open the app in your browser
+# Open the file in your browser
 open index.html
 ```
 
-Or serve it locally:
-
-```bash
-python3 -m http.server 8000
-# then visit http://localhost:8000
-```
-
 No build step. No dependencies. Just open and explore.
-
----
-
-## Project structure
-
-```text
-.
-├── index.html                      # Interactive SDOS (roadmap + diagrams)
-├── SDOS-Pipeline-Flowchart.mermaid # Full pipeline source
-├── SDOS-Defect-Lifecycle.mermaid   # Defect lifecycle source
-└── SDOS-Git-Branching-Flow.mermaid # Branching / PR / CI source
-```
 
 ---
 
